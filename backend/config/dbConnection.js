@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+// opens a connection to mongodb
 //what is synchronous JS
 //async is all about promise
 //what is asynchornous JS
@@ -7,10 +7,7 @@ import mongoose from "mongoose";
 //connecting to the mongoDb Database using mongoose
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(
-      "mongodb+srv://ahmed:123@fypcluster.1p3qom1.mongodb.net/?retryWrites=true&w=majority",
-      {}
-    );
+    const conn = await mongoose.connect(process.env.mongoURI, {});
     console.log("MongoDB connected", conn.connection.host);
   } catch (err) {
     console.log(err);
