@@ -1,36 +1,37 @@
-import USER from "../models/userModel.js";
+import PROFESSOR from "../models/professorModel.js";
 import asyncHAndler from "express-async-handler";
 import bcrypt from "bcryptjs";
-const registerUser = async (req, res) => {
-  const { name, email, password, isAdmin } = req.body;
+const registerProfessor = async (req, res) => {
+  const { name, school, department, courses } = req.body;
 
   //findOne method from mongooose to get only one document
   //this method takes an object for where clause
-  const userExists = await USER.findOne({ email: email });
-  console.log({ userExists });
-  if (userExists) {
+  const profExists = await PROFESSOR.findOne({
+    name: name,
+    department: department,
+  });
+  console.log({ profExists });
+  if (profExists) {
     res.status(400).json({
-      error: "User against this email already exits",
+      error: "Professor already exits",
     });
   }
   //if the key value pairs are same , write like this
-  const user = {
+  const professor = {
     name,
-    email,
-    password,
+    department,
+    courses,
+    school,
   };
-  if (isAdmin) {
-    user.isAdmin = isAdmin;
-  }
   //user creation is a Promise, so we have to wrtie it try cathc.
   //and catch the error if something goes wrong
   try {
-    const createdUser = await USER.create(user);
+    const createdProf = await PROFESSOR.create(professor);
 
-    if (createdUser) {
+    if (createdProf) {
       res.status(201).json({
-        user: createdUser,
-        msg: "user created",
+        professor: createdProf,
+        msg: "Professor added",
       });
     }
   } catch (err) {
@@ -38,7 +39,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const loginProfesor = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await USER.findOne({ email });
@@ -56,7 +57,7 @@ const login = async (req, res) => {
   }
 };
 
-const deleteUser = asyncHAndler(async (req, res) => {
+const deleteProfessor = asyncHAndler(async (req, res) => {
   console.log(req.params);
   const { id } = req.params;
   const user = await USER.findById(id);
@@ -73,7 +74,7 @@ const deleteUser = asyncHAndler(async (req, res) => {
   }
 });
 
-const deactivateUser = asyncHAndler(async (req, res) => {
+const deactivateProfessor = asyncHAndler(async (req, res) => {
   console.log(req.params);
   const { id } = req.params;
   const user = await USER.findById(id);
@@ -105,7 +106,7 @@ const deactivateUser = asyncHAndler(async (req, res) => {
   //   }
 });
 
-const updateUser = asyncHAndler(async (req, res) => {
+const updateProfessor = asyncHAndler(async (req, res) => {
   const { id } = req.params;
   const user = await USER.findById(id);
   if (user) {
@@ -143,4 +144,10 @@ const updateUser = asyncHAndler(async (req, res) => {
   //   }
 });
 
-export { registerUser, login, deleteUser, deactivateUser, updateUser };
+export {
+  registerProfessor,
+  loginProfesor,
+  deleteProfessor,
+  deactivateProfessor,
+  updateProfessor,
+};

@@ -5,6 +5,7 @@ import {
   registerUser,
   deleteUser,
   deactivateUser,
+  updateUser,
 } from "../controllers/userController.js";
 // creating apis
 const userRoutes = express.Router();
@@ -28,5 +29,6 @@ userRoutes.post("/login", login);
 //localhost:8000/api/users/4
 userRoutes.delete("/:id", deleteUser);
 userRoutes.put("/:id", deactivateUser);
+userRoutes.put("/update/:id", updateUser);
 
 export default userRoutes;

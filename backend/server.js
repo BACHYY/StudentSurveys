@@ -4,6 +4,7 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/dbConnection.js";
 import userRoutes from "./routes/userRoutes.js";
+import profRoutes from "./routes/professorRoutes.js";
 dotenv.config();
 // Fix env configuration
 
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 //request for root server adrees
 
 app.use("/api/users", userRoutes);
+app.use("/api/prof", profRoutes);
 // app.use("/api/produst", productRoutes);
 //this app is an EXpress APP ,
 
