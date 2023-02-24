@@ -5,7 +5,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "seed:users": "node seeder/userSeeder"
   },
   "keywords": [],
   "author": "",
