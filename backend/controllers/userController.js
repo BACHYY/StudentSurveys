@@ -1,6 +1,7 @@
 import USER from "../models/userModel.js";
 import asyncHAndler from "express-async-handler";
 import bcrypt from "bcryptjs";
+import { escapeRegex } from "../utils/utils.js";
 const registerUser = async (req, res) => {
   const { name, email, password, isAdmin } = req.body;
 
@@ -113,7 +114,12 @@ const updateUser = asyncHAndler(async (req, res) => {
     //otherwise we use the same/existing name
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    user.password = req.body.password || user.password;
+    if (req.body.password) {
+      if (await user.matchPassword(req.body.password)) {
+        throw new Error("You can't use an old password");
+      }
+      user.password = req.body.password || user.password;
+    }
 
     const updatedUser = await user.save();
 
@@ -143,4 +149,30 @@ const updateUser = asyncHAndler(async (req, res) => {
   //   }
 });
 
-export { registerUser, login, deleteUser, deactivateUser, updateUser };
+const searchByName = async (req, res, next) => {
+  const name = req.query.name; // assuming the search query parameter is named 'name'
+  const regex = new RegExp(escapeRegex(name), "gi");
+  console.log({ name });
+  try {
+    // const users = await USER.find({ name: { $regex: name, $options: "i" } }); // using regex to search for names that contain the given search query
+    // const users = await USER.find({ name: regex });
+    let users = await USER.find({ $text: { $search: name } });
+    if (users.length === 0) {
+      users = await USER.find({
+        $or: [{ name: regex }],
+      });
+    }
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  registerUser,
+  login,
+  deleteUser,
+  deactivateUser,
+  updateUser,
+  searchByName,
+};

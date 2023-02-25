@@ -1,6 +1,7 @@
 import PROFESSOR from "../models/professorModel.js";
 import asyncHAndler from "express-async-handler";
 import bcrypt from "bcryptjs";
+import { escapeRegex } from "../utils/utils.js";
 const registerProfessor = async (req, res) => {
   const { name, school, department, courses } = req.body;
 
@@ -143,11 +144,32 @@ const updateProfessor = asyncHAndler(async (req, res) => {
   //     });
   //   }
 });
+const searchProfessors = async (req, res, next) => {
+  const search = req.query.s; // assuming the search query parameter is named 'name'
+  const regex = new RegExp(escapeRegex(search), "gi");
+  console.log({ search });
+  try {
+    // const users = await USER.find({ search: { $regex: search, $options: "i" } }); // using regex to search for searchs that contain the given search query
+    // const users = await USER.find({ search: regex });
+    let profs = await PROFESSOR.find({ $text: { $search: search } });
+    console.log("fullText search");
 
+    if (profs.length === 0) {
+      console.log("regex search");
+      profs = await PROFESSOR.find({
+        $or: [{ name: regex }],
+      });
+    }
+    res.status(200).json(profs);
+  } catch (error) {
+    next(error);
+  }
+};
 export {
   registerProfessor,
   loginProfesor,
   deleteProfessor,
   deactivateProfessor,
   updateProfessor,
+  searchProfessors,
 };

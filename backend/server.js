@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/dbConnection.js";
 import userRoutes from "./routes/userRoutes.js";
 import profRoutes from "./routes/professorRoutes.js";
+import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 dotenv.config();
 // Fix env configuration
 
@@ -30,5 +31,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/prof", profRoutes);
 // app.use("/api/produst", productRoutes);
 //this app is an EXpress APP ,
-
+app.use(notFound);
+app.use(errorHandler);
 app.listen(8000, () => console.log("Server is listening on PORT 8000"));

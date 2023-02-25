@@ -6,6 +6,7 @@ import {
   deleteProfessor,
   deactivateProfessor,
   updateProfessor,
+  searchProfessors,
 } from "../controllers/profController.js";
 // creating apis
 const professorRoutes = express.Router();
@@ -30,5 +31,6 @@ professorRoutes.post("/login", loginProfesor);
 professorRoutes.delete("/:id", deleteProfessor);
 professorRoutes.put("/:id", deactivateProfessor);
 professorRoutes.put("/update/:id", updateProfessor);
+professorRoutes.get("/search", searchProfessors);
 
 export default professorRoutes;
