@@ -60,16 +60,16 @@ const loginProfesor = async (req, res) => {
 const deleteProfessor = asyncHAndler(async (req, res) => {
   console.log(req.params);
   const { id } = req.params;
-  const user = await USER.findById(id);
-  if (user) {
-    await user.remove();
+  const professor = await PROFESSOR.findById(id);
+  if (professor) {
+    await professor.remove();
     res.json({
-      message: "User removed",
+      message: "Professor removed",
     });
   } else {
     res.status(404);
     res.json({
-      error: "User not found",
+      error: "Professor not found",
     });
   }
 });
@@ -77,17 +77,17 @@ const deleteProfessor = asyncHAndler(async (req, res) => {
 const deactivateProfessor = asyncHAndler(async (req, res) => {
   console.log(req.params);
   const { id } = req.params;
-  const user = await USER.findById(id);
-  if (user) {
-    user.isActive = false;
-    await user.save();
+  const professor = await PROFESSOR.findById(id);
+  if (professor) {
+    professor.isActive = false;
+    await professor.save();
     res.json({
-      message: "User deactivated",
+      message: "Professor deactivated",
     });
   } else {
     res.status(404);
     res.json({
-      error: "User not found",
+      error: "Professor not found",
     });
   }
 
@@ -108,24 +108,24 @@ const deactivateProfessor = asyncHAndler(async (req, res) => {
 
 const updateProfessor = asyncHAndler(async (req, res) => {
   const { id } = req.params;
-  const user = await USER.findById(id);
-  if (user) {
+  const professor = await PROFESSOR.findById(id);
+  if (professor) {
     //if user opts to uptae it's name then we will get name from body
     //otherwise we use the same/existing name
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.password = req.body.password || user.password;
+    professor.name = req.body.name || professor.name;
+    professor.department = req.body.department || professor.department;
+    professor.school = req.body.school || professor.school;
 
-    const updatedUser = await user.save();
+    const updatedProf = await professor.save();
 
     res.json({
-      message: "User details updated successfully",
-      user: updatedUser,
+      message: "Professor details updated successfully",
+      professor: updatedProf,
     });
   } else {
     res.status(404);
     res.json({
-      error: "User not found",
+      error: "Profesor not found",
     });
   }
 
