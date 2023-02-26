@@ -7,7 +7,12 @@ import mongoose from "mongoose";
 //connecting to the mongoDb Database using mongoose
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.mongoURI, {});
+    const conn = await mongoose.connect(process.env.mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+
+      // useCreateIndex: true,
+    });
     console.log("MongoDB connected", conn.connection.host);
   } catch (err) {
     console.log(err);
