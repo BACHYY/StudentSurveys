@@ -32,5 +32,6 @@ app.use("/api/prof", profRoutes);
 // app.use("/api/produst", productRoutes);
 //this app is an EXpress APP ,
 app.use(notFound);
+// so errorHandler give a nice formatting to the erorr
 app.use(errorHandler);
 app.listen(8000, () => console.log("Server is listening on PORT 8000"));

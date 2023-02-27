@@ -151,15 +151,22 @@ const updateUser = asyncHAndler(async (req, res) => {
 
 const searchByName = async (req, res, next) => {
   const name = req.query.name; // assuming the search query parameter is named 'name'
+
+  // the name would be displayed without fully spelling it when we use regex.
+  // so gi takes care of case insensetivity
   const regex = new RegExp(escapeRegex(name), "gi");
   console.log({ name });
   try {
     // const users = await USER.find({ name: { $regex: name, $options: "i" } }); // using regex to search for names that contain the given search query
     // const users = await USER.find({ name: regex });
+
+    //followinf code uses the mongoDB ful text search; using mongodB operators $text and $search
+    //mongooose find method returns array
     let users = await USER.find({ $text: { $search: name } });
+    //if full text search returns 0 results than try regex, this will return an array of users
     if (users.length === 0) {
       users = await USER.find({
-        $or: [{ name: regex }],
+        $or: [{ name: regex }, { email: regex }],
       });
     }
     res.status(200).json(users);

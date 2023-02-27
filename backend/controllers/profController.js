@@ -145,17 +145,20 @@ const updateProfessor = asyncHAndler(async (req, res) => {
   //   }
 });
 const searchProfessors = async (req, res, next) => {
-  const search = req.query.s; // assuming the search query parameter is named 'name'
-  const regex = new RegExp(escapeRegex(search), "gi");
+  const search = req.query.name; // assuming the search query parameter is named 'name'
+  const regex = new RegExp(escapeRegex(search), "gi"); // this makes regex and is provided to the find function to search professors by name
   console.log({ search });
   try {
     // const users = await USER.find({ search: { $regex: search, $options: "i" } }); // using regex to search for searchs that contain the given search query
     // const users = await USER.find({ search: regex });
     let profs = await PROFESSOR.find({ $text: { $search: search } });
+
+    console.log({ profs });
     console.log("fullText search");
 
     if (profs.length === 0) {
       console.log("regex search");
+      console.log(regex);
       profs = await PROFESSOR.find({
         $or: [{ name: regex }],
       });
