@@ -1,6 +1,7 @@
 //Following is the new way of importing packages
 //ES6 Module syntax
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/dbConnection.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -14,6 +15,11 @@ const app = express();
 connectDB();
 //Express middleware to parse the body from the incoming request
 app.use(express.json());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 // console.log(process.env.mongoURI);
 
 //tales 2 arguments

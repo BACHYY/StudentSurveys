@@ -2,12 +2,14 @@ import express from "express";
 import Professor from "../models/professorModel.js";
 import {
   registerProfessor,
-  loginProfesor,
+  loginProfessor,
   deleteProfessor,
   deactivateProfessor,
   updateProfessor,
   searchProfessors,
+  createProfessorRating,
 } from "../controllers/profController.js";
+import { protect } from "../middlewares/authMiddleware.js";
 // creating apis
 const professorRoutes = express.Router();
 
@@ -25,12 +27,13 @@ professorRoutes.post("/", registerProfessor);
 
 // function().then(...)
 
-professorRoutes.post("/login", loginProfesor);
+professorRoutes.post("/login", loginProfessor);
 
 //localhost:8000/api/users/4
 professorRoutes.delete("/:id", deleteProfessor);
 professorRoutes.put("/:id", deactivateProfessor);
 professorRoutes.put("/update/:id", updateProfessor);
 professorRoutes.get("/search", searchProfessors);
+professorRoutes.post("/:id/rate", protect, createProfessorRating);
 
 export default professorRoutes;

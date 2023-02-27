@@ -1,10 +1,11 @@
 import PROFESSOR from "../models/professorModel.js";
-import asyncHAndler from "express-async-handler";
+import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import { escapeRegex } from "../utils/utils.js";
-const registerProfessor = async (req, res) => {
-  const { name, school, department, courses } = req.body;
 
+const registerProfessor = asyncHandler(async (req, res) => {
+  const { name, school, department, course, rating } = req.body;
+  console.log(course);
   //findOne method from mongooose to get only one document
   //this method takes an object for where clause
   const profExists = await PROFESSOR.findOne({
@@ -13,34 +14,32 @@ const registerProfessor = async (req, res) => {
   });
   console.log({ profExists });
   if (profExists) {
-    res.status(400).json({
-      error: "Professor already exits",
-    });
+    res.status(400);
+    throw new Error("Professor already exits");
   }
   //if the key value pairs are same , write like this
   const professor = {
     name,
     department,
-    courses,
     school,
+    rating,
   };
+  // professor.courses.push(course);
   //user creation is a Promise, so we have to wrtie it try cathc.
   //and catch the error if something goes wrong
-  try {
-    const createdProf = await PROFESSOR.create(professor);
+  const createdProf = await PROFESSOR.create(professor);
 
-    if (createdProf) {
-      res.status(201).json({
-        professor: createdProf,
-        msg: "Professor added",
-      });
-    }
-  } catch (err) {
-    console.log(err);
+  if (createdProf) {
+    createdProf.courses.push(course);
+    await createdProf.save();
+    res.status(201).json({
+      professor: createdProf,
+      msg: "Professor added",
+    });
   }
-};
+});
 
-const loginProfesor = async (req, res) => {
+const loginProfessor = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await USER.findOne({ email });
@@ -58,7 +57,7 @@ const loginProfesor = async (req, res) => {
   }
 };
 
-const deleteProfessor = asyncHAndler(async (req, res) => {
+const deleteProfessor = asyncHandler(async (req, res) => {
   console.log(req.params);
   const { id } = req.params;
   const professor = await PROFESSOR.findById(id);
@@ -75,7 +74,7 @@ const deleteProfessor = asyncHAndler(async (req, res) => {
   }
 });
 
-const deactivateProfessor = asyncHAndler(async (req, res) => {
+const deactivateProfessor = asyncHandler(async (req, res) => {
   console.log(req.params);
   const { id } = req.params;
   const professor = await PROFESSOR.findById(id);
@@ -107,7 +106,7 @@ const deactivateProfessor = asyncHAndler(async (req, res) => {
   //   }
 });
 
-const updateProfessor = asyncHAndler(async (req, res) => {
+const updateProfessor = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const professor = await PROFESSOR.findById(id);
   if (professor) {
@@ -168,11 +167,54 @@ const searchProfessors = async (req, res, next) => {
     next(error);
   }
 };
+// @desc    Create new review
+// @route   POST /api/products/:id/reviews
+// @access  Private
+const createProfessorRating = asyncHandler(async (req, res) => {
+  const { comment, clarityRating, difficultyRating, helpfulRating } = req.body;
+
+  const professor = await PROFESSOR.findById(req.params.id);
+
+  if (professor) {
+    const alreadyReviewed = professor.ratings.find(
+      (r) => r.user.toString() === req.user._id.toString()
+    );
+
+    if (alreadyReviewed) {
+      res.status(400);
+      throw new Error("Professor already reviewed");
+    }
+
+    const rating = {
+      name: req.user.name,
+      clarityRating: Number(clarityRating),
+      difficultyRating: Number(difficultyRating),
+      helpfulRating: Number(helpfulRating),
+      comment,
+      user: req.user._id,
+    };
+
+    professor.ratings.push(rating);
+
+    // product.numReviews = product.reviews.length;
+
+    // product.rating =
+    //   product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    //   product.reviews.length;
+
+    await professor.save();
+    res.status(201).json({ message: "Review added" });
+  } else {
+    res.status(404);
+    throw new Error("Professor not found");
+  }
+});
 export {
   registerProfessor,
-  loginProfesor,
+  loginProfessor,
   deleteProfessor,
   deactivateProfessor,
   updateProfessor,
   searchProfessors,
+  createProfessorRating,
 };

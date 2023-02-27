@@ -2,7 +2,9 @@ import USER from "../models/userModel.js";
 import asyncHAndler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import { escapeRegex } from "../utils/utils.js";
-const registerUser = async (req, res) => {
+import generateToken from "../utils/generateToken.js";
+
+const registerUser = asyncHAndler(async (req, res) => {
   const { name, email, password, isAdmin } = req.body;
 
   //findOne method from mongooose to get only one document
@@ -10,9 +12,11 @@ const registerUser = async (req, res) => {
   const userExists = await USER.findOne({ email: email });
   console.log({ userExists });
   if (userExists) {
-    res.status(400).json({
-      error: "User against this email already exits",
-    });
+    res.status(400);
+    throw new Error("User against this email already exits");
+    // .json({
+    //   error: "",
+    // });
   }
   //if the key value pairs are same , write like this
   const user = {
@@ -25,19 +29,15 @@ const registerUser = async (req, res) => {
   }
   //user creation is a Promise, so we have to wrtie it try cathc.
   //and catch the error if something goes wrong
-  try {
-    const createdUser = await USER.create(user);
+  const createdUser = await USER.create(user);
 
-    if (createdUser) {
-      res.status(201).json({
-        user: createdUser,
-        msg: "user created",
-      });
-    }
-  } catch (err) {
-    console.log(err);
+  if (createdUser) {
+    res.status(201).json({
+      user: createdUser,
+      msg: "user created",
+    });
   }
-};
+});
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -49,6 +49,7 @@ const login = async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      token: generateToken(user._id),
     });
   } else {
     res.status(401).json({
@@ -116,7 +117,9 @@ const updateUser = asyncHAndler(async (req, res) => {
     user.email = req.body.email || user.email;
     if (req.body.password) {
       if (await user.matchPassword(req.body.password)) {
-        throw new Error("You can't use an old password");
+        throw new Error(
+          "You can't use an old password, Please enter different one"
+        );
       }
       user.password = req.body.password || user.password;
     }
