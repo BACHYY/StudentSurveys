@@ -1,11 +1,24 @@
 import mongoose from "mongoose";
-import bcryptjs from "bcryptjs";
-// defining a structure of user collection
+// defining a structure of professors collection
 
 const courseSchema = mongoose.Schema({
-  title: { type: String, required: true },
-  courseCode: { type: String, required: true },
+  courseName: { type: String, required: true },
+  courseCount: { type: String, required: true },
 });
+const ratingSchema = mongoose.Schema({
+  id: { type: mongoose.Schema.Types.ObjectId },
+  comment: { type: String, required: false },
+  clarityRating: { type: Number, required: false },
+  difficultyRating: { type: Number, required: false },
+  helpfulRating: { type: Number, required: false },
+  name: { type: String, required: false },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
+});
+
 const professorSchema = mongoose.Schema(
   {
     name: {
@@ -21,6 +34,7 @@ const professorSchema = mongoose.Schema(
       required: true,
     },
     courses: [courseSchema],
+    ratings: [ratingSchema],
     isActive: {
       type: Boolean,
       default: true,
