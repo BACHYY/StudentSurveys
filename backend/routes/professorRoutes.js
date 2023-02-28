@@ -8,6 +8,9 @@ import {
   updateProfessor,
   searchProfessors,
   createProfessorRating,
+  updateProfessorCourse,
+  deleteProfessorCourse,
+  searchProfCourses,
 } from "../controllers/profController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 // creating apis
@@ -35,5 +38,16 @@ professorRoutes.put("/:id", deactivateProfessor);
 professorRoutes.put("/update/:id", updateProfessor);
 professorRoutes.get("/search", searchProfessors);
 professorRoutes.post("/:id/rate", protect, createProfessorRating);
+professorRoutes.put(
+  "/:id/updateCourse/:courseId",
+  protect,
+  updateProfessorCourse
+);
+professorRoutes.delete(
+  "/:id/updateCourse/:courseId",
+  protect,
+  deleteProfessorCourse
+);
+professorRoutes.get("/searchCourse", protect, searchProfCourses);
 
 export default professorRoutes;

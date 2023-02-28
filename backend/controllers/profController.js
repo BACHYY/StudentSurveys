@@ -167,8 +167,8 @@ const searchProfessors = async (req, res, next) => {
     next(error);
   }
 };
-// @desc    Create new review
-// @route   POST /api/products/:id/reviews
+// @desc    Create new rating
+// @route   POST /api/prof/:id/rate
 // @access  Private
 const createProfessorRating = asyncHandler(async (req, res) => {
   const { comment, clarityRating, difficultyRating, helpfulRating } = req.body;
@@ -209,6 +209,99 @@ const createProfessorRating = asyncHandler(async (req, res) => {
     throw new Error("Professor not found");
   }
 });
+const updateProfessorCourse = asyncHandler(async (req, res) => {
+  const { courseName } = req.body;
+  const { id, courseId } = req.params;
+  console.log(id, courseId);
+  let professor = await PROFESSOR.findById(req.params.id);
+
+  if (professor) {
+    console.log(professor);
+    const course = professor.courses.find(
+      (c) => c._id.toString() === courseId.toString()
+    );
+    console.log({ course });
+    course.courseName = courseName;
+    // professor.courses = [...professor.courses, course];
+    // if (alreadyReviewed) {
+    //   res.status(400);
+    //   throw new Error("Professor already reviewed");
+    // }
+
+    // const rating = {
+    //   name: req.user.name,
+    //   clarityRating: Number(clarityRating),
+    //   difficultyRating: Number(difficultyRating),
+    //   helpfulRating: Number(helpfulRating),
+    //   comment,
+    //   user: req.user._id,
+    // };
+
+    // professor.ratings.push(rating);
+
+    await professor.save();
+    res.status(201).json({ message: "Course updated" });
+  } else {
+    res.status(404);
+    throw new Error("Professor not found");
+  }
+});
+const deleteProfessorCourse = asyncHandler(async (req, res) => {
+  const { id, courseId } = req.params;
+  console.log(id, courseId);
+  let professor = await PROFESSOR.findById(req.params.id);
+
+  if (professor) {
+    console.log(professor);
+    const course = professor.courses.find(
+      (c) => c._id.toString() === courseId.toString()
+    );
+    professor.courses = professor.courses.filter(
+      (c) => c._id.toString() === course._id.toString
+    );
+    console.log({ course });
+
+    // professor.courses = [...professor.courses, course];
+    // if (alreadyReviewed) {
+    //   res.status(400);
+    //   throw new Error("Professor already reviewed");
+    // }
+
+    // const rating = {
+    //   name: req.user.name,
+    //   clarityRating: Number(clarityRating),
+    //   difficultyRating: Number(difficultyRating),
+    //   helpfulRating: Number(helpfulRating),
+    //   comment,
+    //   user: req.user._id,
+    // };
+
+    // professor.ratings.push(rating);
+
+    await professor.save();
+    res.status(201).json({ message: "Course deleted successfully" });
+  } else {
+    res.status(404);
+    throw new Error("Professor not found");
+  }
+});
+const searchProfCourses = asyncHandler(async (req, res) => {
+  // const { id } = req.params;
+  const { profId, search } = req.query;
+  let professor = await PROFESSOR.findById(profId);
+
+  if (professor) {
+    console.log(professor);
+    const courses = professor.courses.filter((c) =>
+      c.courseName.toLowerCase().includes(search.toLowerCase())
+    );
+    await professor.save();
+    res.status(200).json({ courses, message: "success" });
+  } else {
+    res.status(404);
+    throw new Error("Professor not found");
+  }
+});
 export {
   registerProfessor,
   loginProfessor,
@@ -217,4 +310,7 @@ export {
   updateProfessor,
   searchProfessors,
   createProfessorRating,
+  updateProfessorCourse,
+  deleteProfessorCourse,
+  searchProfCourses,
 };
