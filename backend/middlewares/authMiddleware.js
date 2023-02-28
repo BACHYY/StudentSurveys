@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 
+// it verifies the login token proviided by the JWT
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -11,11 +12,15 @@ const protect = asyncHandler(async (req, res, next) => {
   ) {
     console.log("tokennn");
     console.log(req.headers.authorization);
+    ///Beare djdjffjfjfjfjfjfjfj
+    //["Bearer", "sjjdjdjdjjfjdjdj"]
     try {
-      token = req.headers.authorization.split(" ")[2];
+      token = req.headers.authorization.split(" ")[-1];
 
+      //we verify the coming token with JWT Secret key
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+      console.log({ decoded });
+      //appending the request object with USER
       req.user = await User.findById(decoded.id).select("-password");
 
       next();
