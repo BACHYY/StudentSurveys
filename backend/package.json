@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "seed:users": "node seeder/userSeeder"
+    "seed:admin": "node seeder/userSeeder"
   },
   "keywords": [],
   "author": "",

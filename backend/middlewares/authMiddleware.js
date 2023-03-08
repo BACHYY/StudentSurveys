@@ -15,11 +15,7 @@ const protect = asyncHandler(async (req, res, next) => {
     ///Beare djdjffjfjfjfjfjfjfj
     //["Bearer", "sjjdjdjdjjfjdjdj"]
     try {
-<<<<<<< HEAD
-      token = req.headers.authorization.split(" ")[-1];
-=======
       token = req.headers.authorization.split(" ")[1];
->>>>>>> 3a2e329226b8cf346972b974527084079668ac34
 
       //we verify the coming token with JWT Secret key
       const decoded = jwt.verify(token, process.env.JWT_SECRET);

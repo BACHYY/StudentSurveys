@@ -30,7 +30,7 @@ const registerProfessor = asyncHandler(async (req, res) => {
   const createdProf = await PROFESSOR.create(professor);
 
   if (createdProf) {
-    createdProf.courses.push(course);
+    // createdProf.courses.push(course); causes an error by putting null in courses when prof is created
     await createdProf.save();
     res.status(201).json({
       professor: createdProf,
@@ -209,6 +209,37 @@ const createProfessorRating = asyncHandler(async (req, res) => {
     throw new Error("Professor not found");
   }
 });
+const addProfessorCourse = asyncHandler(async (req, res) => {
+  const { courseName, courseCount } = req.body;
+  if (!courseName || !courseCount) {
+    throw new Error("Course name and course count are required");
+  }
+  const course = { courseName, courseCount };
+  const { id } = req.params;
+  console.log(id);
+  let professor = await PROFESSOR.findById(id);
+
+  if (professor) {
+    console.log(professor);
+
+    const courseExist = professor.courses.find(
+      (c) => c.courseName.toLowerCase() === courseName.toLowerCase()
+    );
+    if (courseExist) {
+      throw new Error("Course already exists");
+    }
+    // the professor has courses array , we have to find the course that we are gonna update,
+    //we use find method, and match the courseId from params to the professors course
+
+    professor.courses.push(course);
+
+    await professor.save();
+    res.status(201).json({ message: "Course added successfully" });
+  } else {
+    res.status(404);
+    throw new Error("Professor not found");
+  }
+});
 const updateProfessorCourse = asyncHandler(async (req, res) => {
   const { courseName } = req.body;
   const { id, courseId } = req.params;
@@ -217,27 +248,13 @@ const updateProfessorCourse = asyncHandler(async (req, res) => {
 
   if (professor) {
     console.log(professor);
+    // the professor has courses array , we have to find the course that we are gonna update,
+    //we use find method, and match the courseId from params to the professors course
     const course = professor.courses.find(
       (c) => c._id.toString() === courseId.toString()
     );
     console.log({ course });
     course.courseName = courseName;
-    // professor.courses = [...professor.courses, course];
-    // if (alreadyReviewed) {
-    //   res.status(400);
-    //   throw new Error("Professor already reviewed");
-    // }
-
-    // const rating = {
-    //   name: req.user.name,
-    //   clarityRating: Number(clarityRating),
-    //   difficultyRating: Number(difficultyRating),
-    //   helpfulRating: Number(helpfulRating),
-    //   comment,
-    //   user: req.user._id,
-    // };
-
-    // professor.ratings.push(rating);
 
     await professor.save();
     res.status(201).json({ message: "Course updated" });
@@ -256,6 +273,7 @@ const deleteProfessorCourse = asyncHandler(async (req, res) => {
     const course = professor.courses.find(
       (c) => c._id.toString() === courseId.toString()
     );
+
     professor.courses = professor.courses.filter(
       (c) => c._id.toString() === course._id.toString
     );
@@ -313,4 +331,5 @@ export {
   updateProfessorCourse,
   deleteProfessorCourse,
   searchProfCourses,
+  addProfessorCourse,
 };

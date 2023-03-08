@@ -8,9 +8,12 @@ connectDB();
 
 const seedData = async () => {
   try {
+    //This line will delete any exisitng admins
+    await USER.deleteMany({ isAdmin: true });
+    //insert new admin
     await USER.insertMany(users);
 
-    console.log("users added");
+    console.log("Admin created");
   } catch (err) {
     console.error(err);
     process.exit(1);

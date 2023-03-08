@@ -11,6 +11,7 @@ import {
   updateProfessorCourse,
   deleteProfessorCourse,
   searchProfCourses,
+  addProfessorCourse,
 } from "../controllers/profController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 // creating apis
@@ -33,8 +34,8 @@ professorRoutes.post("/", registerProfessor);
 professorRoutes.post("/login", loginProfessor);
 
 //localhost:8000/api/users/4
-professorRoutes.delete("/:id", deleteProfessor);
-professorRoutes.put("/:id", deactivateProfessor);
+professorRoutes.delete("/delete/:id", deleteProfessor);
+professorRoutes.put("/deactivate/:id", deactivateProfessor);
 professorRoutes.put("/update/:id", updateProfessor);
 professorRoutes.get("/search", searchProfessors);
 professorRoutes.post("/:id/rate", protect, createProfessorRating);
@@ -44,10 +45,11 @@ professorRoutes.put(
   updateProfessorCourse
 );
 professorRoutes.delete(
-  "/:id/updateCourse/:courseId",
+  "/:id/deleteCourse/:courseId",
   protect,
   deleteProfessorCourse
 );
-professorRoutes.get("/searchCourse", protect, searchProfCourses);
+professorRoutes.get("/searchCourse", searchProfCourses);
+professorRoutes.post("/addCourse/:id", protect, addProfessorCourse);
 
 export default professorRoutes;

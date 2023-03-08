@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/dbConnection.js";
 import userRoutes from "./routes/userRoutes.js";
 import profRoutes from "./routes/professorRoutes.js";
+import schoolRoutes from "./routes/schoolRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 dotenv.config();
 // Fix env configuration
@@ -35,6 +36,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/prof", profRoutes);
+app.use("/api/school", schoolRoutes);
 // app.use("/api/produst", productRoutes);
 //this app is an EXpress APP ,
 app.use(notFound);
