@@ -38,7 +38,7 @@ professorRoutes.delete("/delete/:id", deleteProfessor);
 professorRoutes.put("/deactivate/:id", deactivateProfessor);
 professorRoutes.put("/update/:id", updateProfessor);
 professorRoutes.get("/search", searchProfessors);
-professorRoutes.post("/:id/rate", protect, createProfessorRating);
+professorRoutes.post("/:id/rate", protect, createProfessorRating); // whenever we have a protected route, they need to have a token.
 professorRoutes.put(
   "/:id/updateCourse/:courseId",
   protect,

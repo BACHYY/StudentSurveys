@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const courseSchema = mongoose.Schema({
   courseName: { type: String, required: true },
-  courseCount: { type: String, required: true },
+  courseCount: { type: Number, required: true },
 });
 const ratingSchema = mongoose.Schema(
   {

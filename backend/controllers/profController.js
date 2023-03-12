@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 import { escapeRegex } from "../utils/utils.js";
 
 const registerProfessor = asyncHandler(async (req, res) => {
-  const { name, school, department, course, rating } = req.body;
-  console.log(course);
+  const { name, school, department } = req.body;
   //findOne method from mongooose to get only one document
   //this method takes an object for where clause
   const profExists = await PROFESSOR.findOne({
@@ -22,7 +21,6 @@ const registerProfessor = asyncHandler(async (req, res) => {
     name,
     department,
     school,
-    rating,
   };
   // professor.courses.push(course);
   //user creation is a Promise, so we have to wrtie it try cathc.
@@ -30,11 +28,10 @@ const registerProfessor = asyncHandler(async (req, res) => {
   const createdProf = await PROFESSOR.create(professor);
 
   if (createdProf) {
-    // createdProf.courses.push(course); causes an error by putting null in courses when prof is created
     await createdProf.save();
     res.status(201).json({
       professor: createdProf,
-      msg: "Professor added",
+      msg: "Professor added successfully",
     });
   }
 });
