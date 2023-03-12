@@ -7,6 +7,7 @@ import connectDB from "./config/dbConnection.js";
 import userRoutes from "./routes/userRoutes.js";
 import profRoutes from "./routes/professorRoutes.js";
 import schoolRoutes from "./routes/schoolRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 dotenv.config();
 // Fix env configuration
@@ -33,10 +34,24 @@ app.get("/", (req, res) => {
 });
 
 //request for root server adrees
+// ======================>CheckPoint 1<=====================
 
 app.use("/api/users", userRoutes);
 app.use("/api/prof", profRoutes);
 app.use("/api/school", schoolRoutes);
+
+
+// ======================>CheckPoint 2<=====================
+app.use("/api/reviews", reviewRoutes)
+// app.use("/api/bookmarks")
+// app.use("/api/password")
+
+
+
+// ======================>CheckPoint 3<=====================
+
+
+
 // app.use("/api/produst", productRoutes);
 //this app is an EXpress APP ,
 app.use(notFound);
