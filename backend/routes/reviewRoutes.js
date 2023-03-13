@@ -1,14 +1,16 @@
-import { Router } from 'express';
-import { getProfessorReviews, getUserReviews } from '../controllers/reviewsController';
-
+import { Router } from "express";
+import {
+  getProfessorReviews,
+  getUserReviews,
+  deleteUserReviews,
+} from "../controllers/reviewsController.js";
 
 const router = Router();
 
 // CRUD
 
-router.get('/professor/:_id', getProfessorReviews)
-router.get('/user/:_id', getUserReviews)
-
-
+router.get("/professorReviews/:_id", getProfessorReviews);
+router.get("/userReviews/:_id", getUserReviews);
+router.delete("/:reviewId", deleteUserReviews);
 
 export default router;
