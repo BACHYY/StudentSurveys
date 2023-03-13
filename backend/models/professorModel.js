@@ -5,19 +5,25 @@ const courseSchema = mongoose.Schema({
   courseName: { type: String, required: true },
   courseCount: { type: Number, required: true },
 });
+const repliesSchema = mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId },
+  comment: { type: String, required: false },
+  upVotes: { type: Number, required: false },
+  downVotes: { type: Number, required: false },
+});
 const ratingSchema = mongoose.Schema(
   {
-    id: { type: mongoose.Schema.Types.ObjectId },
+    _id: { type: mongoose.Schema.Types.ObjectId },
     comment: { type: String, required: false },
-    clarityRating: { type: Number, required: false },
-    difficultyRating: { type: Number, required: false },
-    helpfulRating: { type: Number, required: false },
+    upVotes: { type: Number, required: false },
+    downVotes: { type: Number, required: false },
     name: { type: String, required: false },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
     },
+    replies: [repliesSchema],
   },
   {
     timestamps: true,

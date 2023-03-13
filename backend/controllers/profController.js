@@ -2,6 +2,7 @@ import PROFESSOR from "../models/professorModel.js";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import { escapeRegex } from "../utils/utils.js";
+import mongoose from "mongoose";
 
 const registerProfessor = asyncHandler(async (req, res) => {
   const { name, school, department } = req.body;
@@ -168,7 +169,7 @@ const searchProfessors = async (req, res, next) => {
 // @route   POST /api/prof/:id/rate
 // @access  Private
 const createProfessorRating = asyncHandler(async (req, res) => {
-  const { comment, clarityRating, difficultyRating, helpfulRating } = req.body;
+  const { comment } = req.body;
 
   const professor = await PROFESSOR.findById(req.params.id);
 
@@ -183,21 +184,15 @@ const createProfessorRating = asyncHandler(async (req, res) => {
     }
 
     const rating = {
+      _id: mongoose.Types.ObjectId(),
       name: req.user.name,
-      clarityRating: Number(clarityRating),
-      difficultyRating: Number(difficultyRating),
-      helpfulRating: Number(helpfulRating),
+      upVotes: 0,
+      downVotes: 0,
       comment,
       user: req.user._id,
     };
 
     professor.ratings.push(rating);
-
-    // product.numReviews = product.reviews.length;
-
-    // product.rating =
-    //   product.reviews.reduce((acc, item) => item.rating + acc, 0) /
-    //   product.reviews.length;
 
     await professor.save();
     res.status(201).json({ message: "Review added" });
@@ -275,23 +270,6 @@ const deleteProfessorCourse = asyncHandler(async (req, res) => {
       (c) => c._id.toString() === course._id.toString
     );
     console.log({ course });
-
-    // professor.courses = [...professor.courses, course];
-    // if (alreadyReviewed) {
-    //   res.status(400);
-    //   throw new Error("Professor already reviewed");
-    // }
-
-    // const rating = {
-    //   name: req.user.name,
-    //   clarityRating: Number(clarityRating),
-    //   difficultyRating: Number(difficultyRating),
-    //   helpfulRating: Number(helpfulRating),
-    //   comment,
-    //   user: req.user._id,
-    // };
-
-    // professor.ratings.push(rating);
 
     await professor.save();
     res.status(201).json({ message: "Course deleted successfully" });
