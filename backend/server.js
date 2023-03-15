@@ -8,6 +8,8 @@ import userRoutes from "./routes/userRoutes.js";
 import profRoutes from "./routes/professorRoutes.js";
 import schoolRoutes from "./routes/schoolRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
+import bookmarkRoutes from "./routes/bookmarkRoutes.js";
+import passwordRoutes from './routes/passwordRoutes.js';
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 dotenv.config();
 // Fix env configuration
@@ -40,17 +42,12 @@ app.use("/api/users", userRoutes);
 app.use("/api/prof", profRoutes);
 app.use("/api/school", schoolRoutes);
 
-
 // ======================>CheckPoint 2<=====================
-app.use("/api/reviews", reviewRoutes)
-// app.use("/api/bookmarks")
-// app.use("/api/password")
-
-
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/bookmarks", bookmarkRoutes);
+app.use("/api/password", passwordRoutes);
 
 // ======================>CheckPoint 3<=====================
-
-
 
 // app.use("/api/produst", productRoutes);
 //this app is an EXpress APP ,

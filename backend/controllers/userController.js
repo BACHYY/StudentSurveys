@@ -1,11 +1,11 @@
 import USER from "../models/userModel.js";
 import asyncHAndler from "express-async-handler";
-import bcrypt from "bcryptjs";
 import { escapeRegex } from "../utils/utils.js";
 import generateToken from "../utils/generateToken.js";
 
 const registerUser = asyncHAndler(async (req, res) => {
-  const { name, email, password, isAdmin } = req.body;
+  const { name, email, password, isAdmin, securityQuestion, securityAnswer } =
+    req.body;
 
   //findOne method from mongooose to get only one document
   //this method takes an object for where clause
@@ -23,6 +23,8 @@ const registerUser = asyncHAndler(async (req, res) => {
     name,
     email,
     password,
+    securityQuestion,
+    securityAnswer,
   };
   if (isAdmin) {
     user.isAdmin = isAdmin;
@@ -136,20 +138,6 @@ const updateUser = asyncHAndler(async (req, res) => {
       error: "User not found",
     });
   }
-
-  //   const user = await USER.findOne({ email });
-  //   if (user && (await user.matchPassword(password))) {
-  //     res.json({
-  //       _id: user._id,
-  //       name: user.name,
-  //       email: user.email,
-  //       isAdmin: user.isAdmin,
-  //     });
-  //   } else {
-  //     res.status(401).json({
-  //       error: "Invalid email or password",
-  //     });
-  //   }
 });
 
 const searchByName = async (req, res, next) => {

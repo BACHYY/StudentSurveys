@@ -15,6 +15,14 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    securityQuestion: {
+      type: String,
+      required: true,
+    },
+    securityAnswer: {
+      type: String,
+      required: true,
+    },
     isAdmin: {
       type: Boolean,
       default: false,
@@ -23,6 +31,10 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    bookmarkedReviews: {
+      type: [String],
+      default: [],
+    }
   },
   {
     timestamps: true,
