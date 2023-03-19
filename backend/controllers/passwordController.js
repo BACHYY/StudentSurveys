@@ -1,10 +1,10 @@
-import User from "../models/userModel.js";
+import USER from "../models/userModel.js";
 
 export async function forgotPassword(req, res) {
   try {
     const { email } = req.params;
 
-    const securityQuestion = User.findOne({
+    const securityQuestion = await USER.findOne({
       email: email,
     }).select("securityQuestion");
 
@@ -23,11 +23,11 @@ export async function verifyAnswer(req, res) {
     const { email } = req.params;
     const { securityAnswer } = req.body;
 
-    const answer = await User.findOne({
+    const user = await USER.findOne({
       email: email,
-    }).select("securityAnswer");
+    });
 
-    if (answer === securityAnswer) {
+    if (securityAnswer === user.securityAnswer) {
       res.status(200).json({
         msg: "Correct Answer",
       });
@@ -46,26 +46,28 @@ export async function verifyAnswer(req, res) {
 export async function resetPassword(req, res) {
   try {
     const { email } = req.params;
-    const { password } = user.body;
+    const { password } = req.body;
     if (!password) {
       return res.status(400).json({
         error: "Please enter a password",
       });
     }
 
-    const user = User.findOne({
+    const user = await USER.findOne({
       email: email,
     });
+    if (!user)
+      return res.status(400).json({
+        message: "User Not Found",
+      });
 
     user.password = password;
+    await user.save();
 
-    const updatedUser = await user.save();
-
-    res.json({
+    return res.status(200).json({
       message: "User password updated successfully",
-      user: updatedUser,
+      user: user,
     });
-
   } catch (err) {
     return res.status(400).json({
       error: err.message,

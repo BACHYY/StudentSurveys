@@ -1,5 +1,5 @@
 import professorModel from "../models/professorModel.js";
-import Mongoose from 'mongoose';
+import Mongoose from "mongoose";
 
 export async function getProfessorReviews(req, res) {
   // get all reviews for a professor from mongodb
@@ -53,6 +53,7 @@ export async function voteAProfessorReview(req, res) {
   try {
     const { professorId, reviewId } = req.params;
     const { voteType } = req.query;
+    //  we are making field name to make our querry more dynamic
     let fieldName = "";
     if (voteType === "up") {
       fieldName = "upVotes";
@@ -64,7 +65,8 @@ export async function voteAProfessorReview(req, res) {
 
     const updatedReview = await professorModel.updateOne(
       { _id: professorId, "ratings._id": reviewId },
-      { $inc: { ["ratings.$."+fieldName]: 1 } },
+      //  inc means increment
+      { $inc: { ["ratings.$." + fieldName]: 1 } }
     );
     return res.status(200).json({ reviews: updatedReview });
   } catch (err) {
@@ -74,25 +76,22 @@ export async function voteAProfessorReview(req, res) {
 
 export async function replyToReview(req, res) {
   try {
-    const {
-      professorId,
-      reviewId,
-    } = req.params
-    const {comment} = req.body;
+    const { professorId, reviewId } = req.params;
+    const { comment } = req.body;
 
-    if (!comment){
-      return res.status(400).json({error: "Comment is required"})
+    if (!comment) {
+      return res.status(400).json({ error: "Comment is required" });
     }
-    
+
     const reply = {
       comment,
       upVotes: 0,
       downVotes: 0,
-    }
+    };
     // add reply to review
     const updatedProfessor = await professorModel.updateOne(
       { _id: professorId, "ratings._id": reviewId },
-      { $push: { "ratings.$.replies": reply} }
+      { $push: { "ratings.$.replies": reply } }
     );
 
     return res.status(200).json({ reviews: updatedProfessor?.ratings });
@@ -103,6 +102,7 @@ export async function replyToReview(req, res) {
 
 export async function deleteUserReviews(req, res) {
   try {
+    // destructure professor Id and reviewId
     const { professorId, reviewId } = req.params;
 
     const filteredReviews = await professorModel.findOneAndUpdate(

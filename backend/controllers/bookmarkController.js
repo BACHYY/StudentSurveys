@@ -1,30 +1,29 @@
-import userModel from "../models/userModel.js";
+import mongoose from "mongoose";
 import professorModel from "../models/professorModel.js";
+import USER from "../models/userModel.js";
 
 export async function getUserBookmarkReviews(req, res) {
   try {
     const { userId } = req.params;
 
     // fetch bookmarked reviews from user document
-    const bookmarkedReviews = await userModel
-      .findById(userId)
-      .select("bookmarkedReviews");
+    const user = await USER.findById(userId);
 
     // fetch ratings from professor document
     const bookmarkedProfessors = await professorModel.find({
-      ratings: { $in: bookmarkedReviews },
+      "ratings._id": { $in: user.bookmarkedReviews },
     });
 
     // filter ratings from professor document
     const ratings = bookmarkedProfessors.reduce((arr, prof) => {
       const rightRatings = prof.ratings.filter((rating) =>
-        bookmarkedReviews.includes(rating._id)
+        user.bookmarkedReviews.includes(rating._id)
       );
 
       return [...arr, ...rightRatings];
     }, []);
 
-    return ratings;
+    return res.status(200).json({ reviews: ratings });
   } catch (err) {
     return res.status(400).json({ msg: err.message });
   }
@@ -33,13 +32,26 @@ export async function getUserBookmarkReviews(req, res) {
 export async function addBookmarkReview(req, res) {
   try {
     const { userId, reviewId } = req.params;
-    const updatedBookmarkedReviews = userModel
-      .findByIdAndUpdate(userId, {
-        $push: { bookmarkedReviews: reviewId },
-      })
-      .select("bookmarkedReviews");
 
-    return updatedBookmarkedReviews;
+    const user = await USER.findOneAndUpdate(
+      { _id: userId },
+      { $push: { bookmarkedReviews: reviewId } }
+    );
+    return res.status(200).json(user);
+  } catch (err) {
+    return res.status(400).json({ msg: err.message });
+  }
+}
+
+export async function removeBookmarkReview(req, res) {
+  try {
+    const { userId, reviewId } = req.params;
+    const filteredReviews = await USER.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { bookmarkedReviews: reviewId } }
+    );
+
+    return res.status(200).json({ reviews: filteredReviews });
   } catch (err) {
     return res.status(400).json({ msg: err.message });
   }
