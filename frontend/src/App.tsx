@@ -1,19 +1,19 @@
-import React from "react";
 import "./App.css";
-import { Button, Stack, Typography, styled } from "@mui/material";
-import HeaderNavbar from "./Components/HeaderNavbar";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import Routes from "./ROUTES";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   return (
-    <StackStyle>
-      <HeaderNavbar />
-    </StackStyle>
+    <>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes />
+        </BrowserRouter>
+      </Provider>
+    </>
   );
 }
 
 export default App;
-
-const StackStyle = styled(Stack)({
-  border: "1px solid red",
-  height: "100vh",
-});

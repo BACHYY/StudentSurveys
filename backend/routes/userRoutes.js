@@ -1,12 +1,13 @@
 import express from "express";
-import USER from "../models/userModel.js";
 import {
+  deactivateUser,
+  deleteUser,
   login,
   registerUser,
-  deleteUser,
-  deactivateUser,
-  updateUser,
   searchByName,
+  updateCredentials,
+  updateUser,
+  forgotPass
 } from "../controllers/userController.js";
 // creating apis
 const userRoutes = express.Router();
@@ -26,11 +27,16 @@ userRoutes.post("/", registerUser);
 // function().then(...)
 
 userRoutes.post("/login", login);
+userRoutes.post("/forgotPassword", forgotPass);
+
 
 //localhost:8000/api/users/4
 userRoutes.delete("/:id", deleteUser);
 userRoutes.put("/deactivate/:id", deactivateUser);
 userRoutes.put("/update/:id", updateUser);
+
+userRoutes.put("/:id", updateCredentials);
+
 userRoutes.get("/search", searchByName);
 
 export default userRoutes;

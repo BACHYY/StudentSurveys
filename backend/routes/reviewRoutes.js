@@ -1,19 +1,21 @@
 import { Router } from "express";
 import {
+  deleteUserReviews,
   getProfessorReviews,
   getUserReviews,
-  deleteUserReviews,
-  voteAProfessorReview,
   replyToReview,
+  voteAProfessorReview,
 } from "../controllers/reviewsController.js";
-import { admin, protect } from "../middlewares/authMiddleware.js";
+import { admin } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
 // CRUD
 
 router.get("/professorReviews/:_id", getProfessorReviews);
-router.get("/userReviews/:userId", getUserReviews);
+
+router.get("/userReviews/:_id", getUserReviews);
+
 router.put("/vote/:professorId/:reviewId", voteAProfessorReview);
 
 // responding to existing reviews

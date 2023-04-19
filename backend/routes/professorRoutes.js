@@ -1,17 +1,16 @@
 import express from "express";
-import Professor from "../models/professorModel.js";
 import {
-  registerProfessor,
-  loginProfessor,
-  deleteProfessor,
-  deactivateProfessor,
-  updateProfessor,
-  searchProfessors,
-  createProfessorRating,
-  updateProfessorCourse,
-  deleteProfessorCourse,
-  searchProfCourses,
   addProfessorCourse,
+  createProfessorRating,
+  deactivateProfessor,
+  deleteProfessor,
+  deleteProfessorCourse,
+  loginProfessor,
+  registerProfessor,
+  searchProfCourses,
+  searchProfessors,
+  updateProfessor,
+  updateProfessorCourse,
 } from "../controllers/profController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 // creating apis
@@ -38,7 +37,9 @@ professorRoutes.delete("/delete/:id", deleteProfessor);
 professorRoutes.put("/deactivate/:id", deactivateProfessor);
 professorRoutes.put("/update/:id", updateProfessor);
 professorRoutes.get("/search", searchProfessors);
-professorRoutes.post("/:id/rate", protect, createProfessorRating); // whenever we have a protected route, they need to have a token.
+
+professorRoutes.post("/:_id", protect, createProfessorRating); // whenever we have a protected route, they need to have a token.
+
 professorRoutes.put(
   "/:id/updateCourse/:courseId",
   protect,

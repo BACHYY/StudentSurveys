@@ -20,11 +20,11 @@ export async function forgotPassword(req, res) {
 
 export async function verifyAnswer(req, res) {
   try {
-    const { email } = req.params;
+    const { _id } = req.params;
     const { securityAnswer } = req.body;
 
     const user = await USER.findOne({
-      email: email,
+      _id: _id,
     });
 
     if (securityAnswer === user.securityAnswer) {
@@ -45,7 +45,7 @@ export async function verifyAnswer(req, res) {
 
 export async function resetPassword(req, res) {
   try {
-    const { email } = req.params;
+    const { id } = req.params;
     const { password } = req.body;
     if (!password) {
       return res.status(400).json({
@@ -54,7 +54,7 @@ export async function resetPassword(req, res) {
     }
 
     const user = await USER.findOne({
-      email: email,
+      id: id,
     });
     if (!user)
       return res.status(400).json({

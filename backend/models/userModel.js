@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
 import bcryptjs from "bcryptjs";
+import mongoose from "mongoose";
 // defining a structure of user collection
 const userSchema = mongoose.Schema(
   {
@@ -34,7 +34,7 @@ const userSchema = mongoose.Schema(
     bookmarkedReviews: {
       type: [String],
       default: [],
-    }
+    },
   },
   {
     timestamps: true,
@@ -46,7 +46,9 @@ const userSchema = mongoose.Schema(
 //this method is called from userRoutes LOGIN API
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcryptjs.compare(enteredPassword, this.password);
+  const isMatch = await bcryptjs.compare(enteredPassword, this.password);
+  console.log({ isMatch, thisPassword: this.password, enteredPassword });
+  return isMatch;
 };
 
 //For Hashing a passowrd before it is saved to the DB

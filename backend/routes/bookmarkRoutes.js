@@ -11,6 +11,7 @@ const router = Router();
 
 router.get("/reviews/:userId", getUserBookmarkReviews);
 router.post("/reviews/:userId/:reviewId", addBookmarkReview);
+
 router.delete("/reviews/:userId/:reviewId", removeBookmarkReview);
 
 export default router;

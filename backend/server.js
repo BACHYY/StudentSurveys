@@ -39,11 +39,16 @@ app.get("/", (req, res) => {
 // ======================>CheckPoint 1<=====================
 
 app.use("/api/users", userRoutes);
-app.use("/api/prof", profRoutes);
 app.use("/api/school", schoolRoutes);
 
+
+
+app.use("/api/prof", profRoutes);
 // ======================>CheckPoint 2<=====================
 app.use("/api/reviews", reviewRoutes);
+
+
+
 app.use("/api/bookmarks", bookmarkRoutes);
 app.use("/api/password", passwordRoutes);
 

@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import professorModel from "../models/professorModel.js";
 import USER from "../models/userModel.js";
 

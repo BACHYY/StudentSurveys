@@ -1,5 +1,5 @@
-import professorModel from "../models/professorModel.js";
 import Mongoose from "mongoose";
+import professorModel from "../models/professorModel.js";
 
 export async function getProfessorReviews(req, res) {
   // get all reviews for a professor from mongodb
@@ -23,12 +23,12 @@ export async function getUserReviews(req, res) {
   // get all reviews for a USER from mongodb
   try {
     // we get userId from request parameter
-    const { userId } = req.params;
+    const { _id } = req.params;
     // get all professors that have a review by a user
     // we use simple find function and navigate through the ratings object and find property called user.
     //  that has a user id.
     const professors = await professorModel.find({
-      "ratings.user": Mongoose.Types.ObjectId(userId),
+      "ratings.user": Mongoose.Types.ObjectId(_id),
     });
 
     // Why professors.length?
@@ -38,7 +38,7 @@ export async function getUserReviews(req, res) {
     // didn't understand this part!
     const reviews = professors.reduce((accumulator, professor) => {
       const userReviews = professor.ratings.filter(
-        (rating) => rating.user.toString() === userId
+        (rating) => rating.user.toString() === _id
       );
       return accumulator.concat(userReviews);
     }, []);

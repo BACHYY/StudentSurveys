@@ -1,7 +1,7 @@
-import USER from "../models/userModel.js";
 import asyncHAndler from "express-async-handler";
-import { escapeRegex } from "../utils/utils.js";
+import USER from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import { escapeRegex } from "../utils/utils.js";
 
 const registerUser = asyncHAndler(async (req, res) => {
   const { name, email, password, isAdmin, securityQuestion, securityAnswer } =
@@ -45,9 +45,11 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await USER.findOne({ email });
+
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
+      securityQuestion: user.securityQuestion,
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
@@ -60,8 +62,24 @@ const login = async (req, res) => {
   }
 };
 
+const forgotPass = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await USER.findOne({ email });
+
+  if (user) {
+    res.json({
+      _id: user._id,
+      securityQuestion: user.securityQuestion,
+    });
+  } else {
+    res.status(401).json({
+      error: "Invalid email ",
+    });
+  }
+};
+
 const deleteUser = asyncHAndler(async (req, res) => {
-  console.log(req.params);
   const { id } = req.params;
   const user = await USER.findById(id);
   if (user) {
@@ -113,10 +131,7 @@ const updateUser = asyncHAndler(async (req, res) => {
   const { id } = req.params;
   const user = await USER.findById(id);
   if (user) {
-    //if user opts to uptae it's name then we will get name from body
-    //otherwise we use the same/existing name
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
+    user.password = req.body.password || user.password;
     if (req.body.password) {
       if (await user.matchPassword(req.body.password)) {
         throw new Error(
@@ -129,10 +144,30 @@ const updateUser = asyncHAndler(async (req, res) => {
     const updatedUser = await user.save();
 
     res.json({
-      message: "User details updated successfully",
+      message: "User Password updated successfully",
       user: updatedUser,
     });
   } else {
+    res.status(404);
+    res.json({
+      error: "User not found",
+    });
+  }
+});
+
+const updateCredentials = asyncHAndler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await USER.findByIdAndUpdate(id, {
+      name: req.body.name || user.name,
+      email: req.body.email || user.email,
+    });
+
+    res.json({
+      message: "User details updated successfully",
+      user: user,
+    });
+  } catch {
     res.status(404);
     res.json({
       error: "User not found",
@@ -173,4 +208,6 @@ export {
   deactivateUser,
   updateUser,
   searchByName,
+  updateCredentials,
+  forgotPass,
 };

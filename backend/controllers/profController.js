@@ -1,8 +1,7 @@
-import PROFESSOR from "../models/professorModel.js";
 import asyncHandler from "express-async-handler";
-import bcrypt from "bcryptjs";
-import { escapeRegex } from "../utils/utils.js";
 import mongoose from "mongoose";
+import PROFESSOR from "../models/professorModel.js";
+import { escapeRegex } from "../utils/utils.js";
 
 const registerProfessor = asyncHandler(async (req, res) => {
   const { name, school, department } = req.body;
@@ -171,7 +170,7 @@ const searchProfessors = async (req, res, next) => {
 const createProfessorRating = asyncHandler(async (req, res) => {
   const { comment } = req.body;
 
-  const professor = await PROFESSOR.findById(req.params.id);
+  const professor = await PROFESSOR.findById(req.params._id);
 
   if (professor) {
     const alreadyReviewed = professor.ratings.find(
@@ -190,6 +189,7 @@ const createProfessorRating = asyncHandler(async (req, res) => {
       downVotes: 0,
       comment,
       user: req.user._id,
+      replies: [],
     };
 
     professor.ratings.push(rating);
@@ -201,6 +201,7 @@ const createProfessorRating = asyncHandler(async (req, res) => {
     throw new Error("Professor not found");
   }
 });
+
 const addProfessorCourse = asyncHandler(async (req, res) => {
   const { courseName, courseCount } = req.body;
   if (!courseName || !courseCount) {
