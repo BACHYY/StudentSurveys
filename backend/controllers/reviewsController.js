@@ -20,13 +20,8 @@ export async function getProfessorReviews(req, res) {
 }
 
 export async function getUserReviews(req, res) {
-  // get all reviews for a USER from mongodb
   try {
-    // we get userId from request parameter
     const { _id } = req.params;
-    // get all professors that have a review by a user
-    // we use simple find function and navigate through the ratings object and find property called user.
-    //  that has a user id.
     const professors = await professorModel.find({
       "ratings.user": Mongoose.Types.ObjectId(_id),
     });
@@ -77,7 +72,7 @@ export async function voteAProfessorReview(req, res) {
 export async function replyToReview(req, res) {
   try {
     const { professorId, reviewId } = req.params;
-    const { comment } = req.body;
+    const { comment, name } = req.body;
 
     if (!comment) {
       return res.status(400).json({ error: "Comment is required" });
@@ -85,6 +80,7 @@ export async function replyToReview(req, res) {
 
     const reply = {
       comment,
+      name,
       upVotes: 0,
       downVotes: 0,
     };

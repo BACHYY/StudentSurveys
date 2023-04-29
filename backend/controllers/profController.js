@@ -168,7 +168,7 @@ const searchProfessors = async (req, res, next) => {
 // @route   POST /api/prof/:id/rate
 // @access  Private
 const createProfessorRating = asyncHandler(async (req, res) => {
-  const { comment } = req.body;
+  const { comment, profName } = req.body;
 
   const professor = await PROFESSOR.findById(req.params._id);
 
@@ -185,6 +185,7 @@ const createProfessorRating = asyncHandler(async (req, res) => {
     const rating = {
       _id: mongoose.Types.ObjectId(),
       name: req.user.name,
+      profName,
       upVotes: 0,
       downVotes: 0,
       comment,

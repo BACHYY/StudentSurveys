@@ -15,7 +15,11 @@ export default function SettingsReviews() {
         alignItems="center"
         justifyContent="space-around"
       >
-        <StackStyle2 flexDirection="row" alignItems="center">
+        <StackStyle2
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <AvatarStyle />
           <Typography variant="h3">{data.name}</Typography>
         </StackStyle2>

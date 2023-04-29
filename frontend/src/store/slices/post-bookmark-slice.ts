@@ -6,16 +6,22 @@ import { CONFIG_API_URL } from "../../constants/CONFIG";
 import getURLSearchParam from "../../utils/getURLSearchParam";
 import { setSnackbar } from "./snackbar-slice";
 
+interface IName {
+  reviewId: string;
+  profName: string;
+}
+
 interface IReply {
   _id: string;
   comment: string;
+  name: string;
   upVotes: number;
   downVotes: number;
 }
-
-interface IReview {
+interface IBookmark {
   _id: string;
   comment: string;
+  profName: string;
   upVotes: number;
   downVotes: number;
   name: string;
@@ -24,7 +30,7 @@ interface IReview {
 }
 
 type TState = {
-  data: IReview[];
+  data: IBookmark[];
   loading: boolean;
 };
 
@@ -33,28 +39,8 @@ const initialState: TState = {
   loading: false,
 };
 
-export const getReviews = createAsyncThunk(
-  "users/getReviews",
-  async (_, api) => {
-    const dispatch = api.dispatch as AppDispatch;
-    await fakeDelay(1000);
-    try {
-      const _id = getURLSearchParam("profid");
-
-      const { data } = await axios.get(
-        `${CONFIG_API_URL}/api/reviews/professorReviews/${_id}`
-      );
-
-      return data.reviews;
-    } catch (err) {
-      dispatch(setSnackbar("Error fetching data", { severity: "error" }));
-      throw err;
-    }
-  }
-);
-
-export const getUserReviews = createAsyncThunk(
-  "users/getUserReviews",
+export const getUserBookmarks = createAsyncThunk(
+  "users/getUserBookmarks",
   async (_, api) => {
     const dispatch = api.dispatch as AppDispatch;
     await fakeDelay(1000);
@@ -62,7 +48,7 @@ export const getUserReviews = createAsyncThunk(
       const _id = getURLSearchParam("userid");
 
       const { data } = await axios.get(
-        `${CONFIG_API_URL}/api/reviews/userReviews/${_id}`
+        `${CONFIG_API_URL}/api/bookmarks/reviews/${_id}`
       );
 
       return data.reviews;
@@ -75,23 +61,21 @@ export const getUserReviews = createAsyncThunk(
 
 export const postBookmark = createAsyncThunk(
   "users/postBookmark",
-  async (comment: string, api) => {
+  async ({ reviewId, profName }: IName, api) => {
     const dispatch = api.dispatch as AppDispatch;
     await fakeDelay(1000);
 
     try {
-      const _id = getURLSearchParam("userid");
-
+      const userId = getURLSearchParam("userid");
       const body = {
-        comment,
+        profName,
       };
       const { data } = await axios.post(
-        `${CONFIG_API_URL}/api/bookmarks/reviews/${_id}`,
+        `${CONFIG_API_URL}/api/bookmarks/reviews/${userId}/${reviewId}`,
         body
       );
-
-      dispatch(setSnackbar("Bookmarked Successfully 🎉 "));
-      return data.user;
+      dispatch(setSnackbar("Bookmarked Successfully  🎉 "));
+      return data;
     } catch (err) {
       dispatch(setSnackbar("Error", { severity: "error" }));
       throw err;
@@ -100,7 +84,7 @@ export const postBookmark = createAsyncThunk(
 );
 
 export const BookmarkSlice = createSlice({
-  name: "BookmarkSlice",
+  name: "Bookmark",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -114,7 +98,7 @@ export const BookmarkSlice = createSlice({
 
     builder.addCase(
       postBookmark.fulfilled,
-      (state, action: PayloadAction<IReview>) => {
+      (state, action: PayloadAction<IBookmark>) => {
         return {
           ...state,
           data: state.data.concat(action.payload),
@@ -130,36 +114,9 @@ export const BookmarkSlice = createSlice({
       };
     });
 
-    // ==================>Get Reviews<===================
-
-    builder.addCase(getReviews.pending, (state) => {
-      return {
-        ...state,
-        loading: true,
-      };
-    });
-
-    builder.addCase(
-      getReviews.fulfilled,
-      (state, action: PayloadAction<IReview[]>) => {
-        return {
-          ...state,
-          data: action.payload,
-          loading: false,
-        };
-      }
-    );
-
-    builder.addCase(getReviews.rejected, (state) => {
-      return {
-        ...state,
-        loading: false,
-      };
-    });
-
     // ==================>Get User Reviews<===================
 
-    builder.addCase(getUserReviews.pending, (state) => {
+    builder.addCase(getUserBookmarks.pending, (state) => {
       return {
         ...state,
         loading: true,
@@ -167,8 +124,8 @@ export const BookmarkSlice = createSlice({
     });
 
     builder.addCase(
-      getUserReviews.fulfilled,
-      (state, action: PayloadAction<IReview[]>) => {
+      getUserBookmarks.fulfilled,
+      (state, action: PayloadAction<IBookmark[]>) => {
         return {
           ...state,
           data: action.payload,
@@ -177,7 +134,7 @@ export const BookmarkSlice = createSlice({
       }
     );
 
-    builder.addCase(getUserReviews.rejected, (state) => {
+    builder.addCase(getUserBookmarks.rejected, (state) => {
       return {
         ...state,
         loading: false,

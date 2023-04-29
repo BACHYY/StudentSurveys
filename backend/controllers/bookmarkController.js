@@ -3,10 +3,10 @@ import USER from "../models/userModel.js";
 
 export async function getUserBookmarkReviews(req, res) {
   try {
-    const { userId } = req.params;
+    const { _id } = req.params;
 
     // fetch bookmarked reviews from user document
-    const user = await USER.findById(userId);
+    const user = await USER.findById(_id);
 
     // fetch ratings from professor document
     const bookmarkedProfessors = await professorModel.find({

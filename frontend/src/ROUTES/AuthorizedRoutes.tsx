@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Navigate,
   Route,
@@ -5,7 +6,11 @@ import {
   useLocation,
   useSearchParams,
 } from "react-router-dom";
+import AddProfessors from "../Components/AddProfessors";
+import AddSchools from "../Components/AddSchools";
 import Review from "../Components/Review";
+import Snack from "../Components/Snack";
+import { useAppSelector } from "../Components/useReactRedux";
 import BookmarkedReviews from "../Pages/BookmarkedReviews";
 import ChangePassword from "../Pages/ChangePassword";
 import MainPage from "../Pages/MainPage";
@@ -13,12 +18,6 @@ import School from "../Pages/School";
 import SecurityQuestion from "../Pages/SecurityQuestion";
 import SettingsReviews from "../Pages/SettingsReviews";
 import UserSettings from "../Pages/UserSettings";
-import Snack from "../Components/Snack";
-import AddSchools from "../Components/AddSchools";
-import AddProfessors from "../Components/AddProfessors";
-import { useEffect } from "react";
-import { useAppSelector } from "../Components/useReactRedux";
-import UnAuthorizedSecurityQuestion from "../Components/UnAuthorizedSecurityQuestion";
 
 export default function AuthorizedRoutes() {
   const userid = useAppSelector((state) => state.login.data._id);
@@ -43,7 +42,6 @@ export default function AuthorizedRoutes() {
           element={<SecurityQuestion />}
         />
 
-        
         <Route
           path="/usersettings/securityquestion/changepassword"
           element={<ChangePassword />}

@@ -1,4 +1,8 @@
-import { ThumbDownOutlined, ThumbUpOutlined } from "@mui/icons-material";
+import {
+  Delete,
+  ThumbDownOutlined,
+  ThumbUpOutlined,
+} from "@mui/icons-material";
 import {
   Avatar,
   Divider,
@@ -10,29 +14,37 @@ import {
 } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { useEffect } from "react";
-import { getUserReviews } from "../store/slices/post-review-slice";
+import { getUserBookmarks } from "../store/slices/post-bookmark-slice";
 import ProfessorRating from "./ProfessorRating";
 import { useAppDispatch, useAppSelector } from "./useReactRedux";
 
-export default function SettingsUserReviews() {
+export default function SettingsBookmarkedReviews() {
   const { data } = useAppSelector((state) => state.login);
 
   const dispatch = useAppDispatch();
-  const review = useAppSelector((state) => state.review.data);
-
+  const bookmarks = useAppSelector((state) => state.bookmark.data);
   useEffect(() => {
-    dispatch(getUserReviews());
+    dispatch(getUserBookmarks());
   }, []);
 
+  const _id = data._id;
+  const onDelete = async (bookmarkId: string) => {
+    await fetch(
+      `http://localhost:8000/api/bookmarks/reviews/${_id}/${bookmarkId}`,
+      { method: "DELETE" }
+    );
+  };
+
+  console.log(bookmarks);
   return (
     <Stack alignItems="center" justifyContent="center">
-      {review.map((review, index) => (
+      {bookmarks.map((bookmark, index) => (
         <PaperStyle2 elevation={3} key={index}>
           <StackStyle spacing={2}>
             <StackStyle1
               flexDirection="row"
-              alignItems="center"
               justifyContent="space-between"
+              alignItems="center"
             >
               <Stack
                 flexDirection="row"
@@ -41,17 +53,27 @@ export default function SettingsUserReviews() {
               >
                 <Avatar
                   sx={{ bgcolor: deepPurple[400] }}
-                  alt={review.name}
+                  alt={data.name}
                   src="/broken-image.jpg"
                 />
-                <Typography>{review.name}</Typography>
+                <Typography>{bookmark.name}</Typography>
               </Stack>
-              <Stack flexDirection="row" alignItems="center">
-                <Typography sx={{ fontWeight: "bold" }}>Professor: </Typography>
+              <Stack alignItems="flex-end">
+                <IconButton
+                  title="delete bookmark"
+                  onClick={() => onDelete(bookmark._id)}
+                >
+                  <Delete color="error" />
+                </IconButton>
+                <Stack flexDirection="row" alignItems="center">
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    Professor:{" "}
+                  </Typography>
 
-                <Typography variant="subtitle1" color="GrayText">
-                  {review.profName}
-                </Typography>
+                  <Typography variant="subtitle1" color="GrayText">
+                    {bookmark.profName}
+                  </Typography>
+                </Stack>
               </Stack>
             </StackStyle1>
             <Divider />
@@ -60,7 +82,7 @@ export default function SettingsUserReviews() {
             </Stack>
 
             <Stack>
-              <Typography>{review.comment}</Typography>
+              <Typography>{bookmark.comment}</Typography>
             </Stack>
             <Divider />
             <Stack
@@ -70,7 +92,7 @@ export default function SettingsUserReviews() {
             >
               <StackStyle2 flexDirection="row" alignItems="center">
                 <TypographyStyle variant="body1">
-                  {review.upVotes}
+                  {bookmark.upVotes}
                 </TypographyStyle>
                 <IconButton title="like">
                   <ThumbUpOutlined />
@@ -79,13 +101,13 @@ export default function SettingsUserReviews() {
                   <ThumbDownOutlined />
                 </IconButton>
                 <TypographyStyle variant="body1">
-                  {review.downVotes}
+                  {bookmark.downVotes}
                 </TypographyStyle>
               </StackStyle2>
             </Stack>
             <Stack>
               <TypographyStyle1 variant="h6">Replies</TypographyStyle1>
-              {review.replies?.map((option, index) => (
+              {bookmark.replies?.map((option, index) => (
                 <StackStyle4 elevation={6} key={index}>
                   <StackStyle5 flexDirection="row" alignItems="center">
                     <Typography variant="subtitle1" color="GrayText">
@@ -109,16 +131,13 @@ const TypographyStyle = styled(Typography)({
   padding: "0px 10px",
   color: "white",
 });
+
 const PaperStyle2 = styled(Paper)({
   display: "flex",
   flexDirection: "column",
   borderRadius: "20px",
   width: "700px",
   margin: "30px",
-});
-
-const TypographyStyle1 = styled(Typography)({
-  fontWeight: "bold",
 });
 
 const StackStyle = styled(Stack)({
@@ -131,6 +150,10 @@ const StackStyle1 = styled(Stack)({
 
 const StackStyle2 = styled(Stack)({
   gap: "20px",
+});
+
+const TypographyStyle1 = styled(Typography)({
+  fontWeight: "bold",
 });
 
 const StackStyle5 = styled(Stack)({

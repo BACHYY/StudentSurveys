@@ -1,27 +1,20 @@
-import {
-  Box,
-  Button,
-  Paper,
-  Rating,
-  Stack,
-  styled,
-  TextField,
-} from "@mui/material";
-import React, { useState } from "react";
+import { Button, Paper, Stack, styled, TextField } from "@mui/material";
+import { useState } from "react";
 import { postComment } from "../store/slices/post-review-slice";
 import ActivityIndicator from "./ActivityIndicator";
 import FeedbackRating from "./FeedbackRating";
 import { useAppDispatch, useAppSelector } from "./useReactRedux";
-import StarIcon from "@mui/icons-material/Star";
 
 export default function ProfessorReviewWriteReview() {
   const dispatch = useAppDispatch();
   const [comment, setComment] = useState("");
   const loading = useAppSelector((state) => state.review.loading);
+  const { data } = useAppSelector((state) => state.professor);
+  const profName = data.name;
 
   const onSubmit = async () => {
     try {
-      dispatch(postComment(comment));
+      dispatch(postComment({ comment, profName }));
     } catch (err) {
       console.log(err);
     }

@@ -9,7 +9,7 @@ const router = Router();
 
 // CRUD
 
-router.get("/reviews/:userId", getUserBookmarkReviews);
+router.get("/reviews/:_id", getUserBookmarkReviews);
 router.post("/reviews/:userId/:reviewId", addBookmarkReview);
 
 router.delete("/reviews/:userId/:reviewId", removeBookmarkReview);

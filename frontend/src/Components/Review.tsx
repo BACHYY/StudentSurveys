@@ -18,8 +18,8 @@ export default function Review() {
 
   useEffect(() => {
     if (!prof_id) return;
-    setSearchParams({ profid: prof_id });
-  }, [prof_id, pathname]);
+    setSearchParams({ userid: user_id, profid: prof_id });
+  }, [user_id, prof_id, pathname]);
 
   return (
     <StackStyle>

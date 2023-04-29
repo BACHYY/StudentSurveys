@@ -1,7 +1,7 @@
 import BookmarkBorder from "@mui/icons-material/BookmarkBorder";
 import { Avatar, Divider, Stack, styled, Typography } from "@mui/material";
 import HeaderNavbar from "../Components/HeaderNavbar";
-import SettingsUserReviews from "../Components/SettingsUserReviews";
+import SettingsBookmarkedReviews from "../Components/SettingsBookmarkedReviews";
 import { useAppSelector } from "../Components/useReactRedux";
 
 export default function BookmarkedReviews() {
@@ -30,7 +30,7 @@ export default function BookmarkedReviews() {
       </StackStyle>
       <Divider />
 
-      <SettingsUserReviews />
+      <SettingsBookmarkedReviews />
     </StackStyle0>
   );
 }
