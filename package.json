@@ -1,0 +1,22 @@
+{
+    "name": "studentsurveys",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "concurrently \"cd frontend && npm start\" \"cd backend && npm run dev\"",
+        "heroku-postbuild": "cd backend && npm install && cd .. && cd frontend && npm install",
+        "start": "cd backend && npm start"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/BACHYY/StudentSurveys.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/BACHYY/StudentSurveys/issues"
+    },
+    "homepage": "https://github.com/BACHYY/StudentSurveys#readme"
+}
