@@ -7,7 +7,7 @@ type TState = {
     severity: AlertColor;
     variant: "standard" | "outlined" | "filled";
 };
-type TPayloadType = {
+export type TPayloadType = {
     severity?: TState['severity'];
     variant?: TState['variant'];
 }

@@ -4,7 +4,7 @@ import MainPageImageComponent from "../Components/MainPageImageComponent";
 
 export default function MainPage() {
   return (
-    <StackStyle>
+    <StackStyle >
       <HeaderNavbar />
       <MainPageImageComponent />
     </StackStyle>
