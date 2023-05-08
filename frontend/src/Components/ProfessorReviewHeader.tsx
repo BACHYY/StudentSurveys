@@ -1,7 +1,6 @@
 import { Stack, styled, Typography } from '@mui/material';
 import ProfessorRating from './ProfessorRating';
 import { useAppSelector } from './useReactRedux';
-import { Irating } from '../store/slices/post-review-slice';
 
 export default function ProfessorReviewHeader() {
     const { data } = useAppSelector((state) => state.professor);

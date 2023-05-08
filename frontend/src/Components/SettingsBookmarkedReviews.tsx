@@ -20,7 +20,6 @@ export default function SettingsBookmarkedReviews() {
         await fetch(`http://localhost:8000/api/bookmarks/reviews/${_id}/${bookmarkId}`, { method: 'DELETE' });
     };
 
-    console.log(bookmarks);
     return (
         <Stack alignItems="center" justifyContent="center">
             {bookmarks.map((bookmark, index) => (

@@ -2,9 +2,16 @@ import { StarRate } from '@mui/icons-material';
 import { Checkbox, Paper, Slider, Stack, styled, Typography } from '@mui/material';
 import React from 'react';
 import { Irating } from '../store/slices/post-review-slice';
+import { IReviewLevel, TLevelName } from './Review';
 
-export default function ProfessorReviewShowRatings({ total, options, averageRating }: Irating) {
-    console.log(options);
+export interface RatingProps {
+    ratingData: Irating;
+    handleShowLevel: (name: TLevelName) => void;
+    showLevels: IReviewLevel;
+}
+
+export default function ProfessorReviewShowRatings({ ratingData, handleShowLevel, showLevels }: RatingProps) {
+    const { averageRating, total, options } = ratingData;
     return (
         <PaperStyle1 variant="outlined" square>
             <StackStyle>
@@ -20,7 +27,12 @@ export default function ProfessorReviewShowRatings({ total, options, averageRati
                 {options.map((option) => (
                     <StackStyle2 flexDirection="row" alignItems="center" justifyContent="space-between">
                         <StackStyle3 flexDirection="row" alignItems="center">
-                            <Checkbox checked={true} />
+                            <Checkbox
+                                checked={showLevels[option.title]}
+                                onChange={() => {
+                                    handleShowLevel(option.title);
+                                }}
+                            />
                             <Typography>{option.title}</Typography>
                         </StackStyle3>
                         <StackStyle4>

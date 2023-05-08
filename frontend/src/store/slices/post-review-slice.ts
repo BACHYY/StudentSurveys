@@ -5,6 +5,7 @@ import { AppDispatch, RootState } from '../../Components/redux-types';
 import { CONFIG_API_URL } from '../../constants/CONFIG';
 import getURLSearchParam from '../../utils/getURLSearchParam';
 import { setSnackbar } from './snackbar-slice';
+import { TLevelName } from '../../Components/Review';
 
 interface IVote {
     voteType: string;
@@ -34,7 +35,7 @@ export interface Irating {
     total: number;
     averageRating: number;
     options: {
-        title: string;
+        title: TLevelName;
         rating_percentage: number;
     }[];
 }
@@ -45,7 +46,7 @@ export interface IReview {
     profName: string;
     upVotes: number;
     downVotes: number;
-    name: string;
+    name: TLevelName;
     user: string;
     ratingValue: number;
     replies: IReply[];
@@ -67,11 +68,11 @@ const initialState: TState = {
             total: 0,
             averageRating: 5,
             options: [
-                { title: 'one', rating_percentage: 100 },
-                { title: 'two', rating_percentage: 100 },
-                { title: 'three', rating_percentage: 100 },
-                { title: 'four', rating_percentage: 100 },
-                { title: 'five', rating_percentage: 100 },
+                { title: '1-star', rating_percentage: 100 },
+                { title: '2-star', rating_percentage: 100 },
+                { title: '3-star', rating_percentage: 100 },
+                { title: '4-star', rating_percentage: 100 },
+                { title: '5-star', rating_percentage: 100 },
             ],
         },
     },

@@ -1,7 +1,7 @@
 import { BookmarkBorderOutlined, DeleteOutline, ThumbDownOutlined, ThumbUpOutlined } from '@mui/icons-material';
 import { Avatar, Button, Divider, IconButton, Paper, Stack, styled, TextField, Typography } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { postBookmark } from '../store/slices/post-bookmark-slice';
 import { postReply } from '../store/slices/post-reply-slice';
 import { IReview, postVote, deleteReview, IDelete } from '../store/slices/post-review-slice';
@@ -18,6 +18,8 @@ interface Review {
     setSnackbar: (message: string, props: TPayloadType | undefined) => void;
     deleteReview: (props: IDelete) => void;
 }
+
+
 
 function ReviewComponent({ review, setSnackbar, deleteReview }: Review) {
     const dispatch = useAppDispatch();
