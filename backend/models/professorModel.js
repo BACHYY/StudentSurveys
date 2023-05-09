@@ -53,7 +53,13 @@ const professorSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        courses: [courseSchema],
+        // courses: [courseSchema],
+        courses: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'Course',
+            },
+        ],
         ratings: [ratingSchema],
         isActive: {
             type: Boolean,

@@ -2,6 +2,7 @@ import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import PROFESSOR from '../models/professorModel.js';
 import { escapeRegex } from '../utils/utils.js';
+import Course from '../models/courseModel.js';
 
 const registerProfessor = asyncHandler(async (req, res) => {
     const { name, school, department } = req.body;
@@ -209,21 +210,25 @@ const addProfessorCourse = asyncHandler(async (req, res) => {
     if (!courseName || !courseCount) {
         throw new Error('Course name and course count are required');
     }
-    const course = { courseName, courseCount };
+
+    let exsistingCourse = await Course.findOne({ courseName: courseName.toLowerCase() });
+    if (!exsistingCourse) {
+        exsistingCourse = await Course.create({ courseCount, courseName: courseName.toLowerCase() });
+    }
+
     const { id } = req.params;
     let professor = await PROFESSOR.findById(id);
 
     if (professor) {
-        const courseExist = professor.courses.find((c) => c.courseName.toLowerCase() === courseName.toLowerCase());
+        const courseExist = professor.courses.find((c) => c == exsistingCourse._id);
         if (courseExist) {
             throw new Error('Course already exists');
         }
         // the professor has courses array , we have to find the course that we are gonna update,
         //we use find method, and match the courseId from params to the professors course
-
-        professor.courses.push(course);
-
-        await professor.save();
+        console.log(exsistingCourse);
+        professor.courses.push(exsistingCourse._id);
+        professor.save();
         res.status(201).json({ message: 'Course added successfully' });
     } else {
         res.status(404);
@@ -250,7 +255,7 @@ const updateProfessorCourse = asyncHandler(async (req, res) => {
 });
 const deleteProfessorCourse = asyncHandler(async (req, res) => {
     const { id, courseId } = req.params;
-    let professor = await PROFESSOR.findById(req.params.id);
+    let professor = await PROFESSOR.findById(req.params.id).populate('Course');
 
     if (professor) {
         const course = professor.courses.find((c) => c._id.toString() === courseId.toString());
@@ -264,10 +269,11 @@ const deleteProfessorCourse = asyncHandler(async (req, res) => {
         throw new Error('Professor not found');
     }
 });
+
 const searchProfCourses = asyncHandler(async (req, res) => {
     // const { id } = req.params;
     const { profId, search } = req.query;
-    let professor = await PROFESSOR.findById(profId);
+    let professor = await PROFESSOR.findById(profId).populate('courses');
 
     if (professor) {
         if (!search || !search.length) {
@@ -281,6 +287,7 @@ const searchProfCourses = asyncHandler(async (req, res) => {
         throw new Error('Professor not found');
     }
 });
+
 export {
     registerProfessor,
     loginProfessor,
