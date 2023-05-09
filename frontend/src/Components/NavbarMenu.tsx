@@ -133,8 +133,8 @@ export default function NavbarMenu() {
                     </>
                 ) : (
                     <MenuItem onClick={navigateToReviews}>
-                        <RestoreFromTrashOutlined fontSize="small" sx={{ paddingRight: '10px', color: 'gray' }} />{' '}
-                        Deleted Reviews
+                        {/* <RestoreFromTrashOutlined fontSize="small" sx={{ paddingRight: '10px', color: 'gray' }} />{' '}
+                        Deleted Reviews */}
                     </MenuItem>
                 )}
 

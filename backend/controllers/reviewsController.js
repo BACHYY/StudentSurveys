@@ -77,7 +77,6 @@ export async function getProfessorReviews(req, res) {
                 },
             ],
         };
-        console.log(finalRatings);
         // otherwise return we store professor ratings in reviews and return that.
         return res.status(200).json({ reviews: professor.ratings, rating: finalRatings });
     } catch (err) {

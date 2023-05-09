@@ -1,4 +1,4 @@
-import { Divider, Stack, styled } from '@mui/material';
+import { Divider, Stack, Typography, styled } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import HeaderNavbar from './HeaderNavbar';
@@ -6,8 +6,10 @@ import ProfessorReviewHeader from './ProfessorReviewHeader';
 import ProfessorReviewShowRatings from './ProfessorReviewShowRatings';
 import ProfessorReviewShowReview from './ProfessorReviewShowReview';
 import ProfessorReviewWriteReview from './ProfessorReviewWriteReview';
-import { useAppSelector } from './useReactRedux';
+import { useAppDispatch, useAppSelector } from './useReactRedux';
 import ProfessorCourse from './ProfessorCourse';
+import { setProfessor } from '../store/slices/professor-slice';
+import { getReviews } from '../store/slices/post-review-slice';
 
 export interface IReviewLevel {
     '1-star': boolean;
@@ -39,6 +41,28 @@ export default function Review() {
 
     const reviews = useAppSelector((state) => state.review.data);
 
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        let professor_id: string;
+
+        if (prof_id) {
+            professor_id = prof_id as string;
+            localStorage.setItem('prof_id', prof_id);
+            if (professor_id) {
+                setSearchParams({ profid: professor_id, userid: user_id });
+            }
+        } else {
+            professor_id = localStorage.getItem('prof_id') as string;
+
+            fetch(`http://localhost:8000/api/prof/getSingle/${professor_id}`).then((response) => {
+                response.json().then((res) => {
+                    dispatch(setProfessor(res));
+                    dispatch(getReviews());
+                });
+            });
+        }
+    }, [prof_id]);
     useEffect(() => {
         if (!prof_id) return;
         setSearchParams({ userid: user_id, profid: prof_id });
@@ -54,12 +78,20 @@ export default function Review() {
             <Divider />
 
             <ProfessorReviewWriteReview />
-            <ProfessorReviewShowRatings
-                ratingData={reviews.rating}
-                showLevels={showLevels}
-                handleShowLevel={handleShowLevel}
-            />
-            <ProfessorReviewShowReview showLevels={showLevels} reviews={reviews.reviews} />
+            {reviews.reviews.length ? (
+                <>
+                    <ProfessorReviewShowRatings
+                        ratingData={reviews.rating}
+                        showLevels={showLevels}
+                        handleShowLevel={handleShowLevel}
+                    />
+                    <ProfessorReviewShowReview showLevels={showLevels} reviews={reviews.reviews} />
+                </>
+            ) : (
+                <StackStyle alignItems={'center'} justifyContent={'center'}>
+                    <Typography variant="h5">No reviews to show</Typography>
+                </StackStyle>
+            )}
         </StackStyle>
     );
 }

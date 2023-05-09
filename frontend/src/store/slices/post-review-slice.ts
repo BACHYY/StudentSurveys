@@ -83,7 +83,11 @@ export const getReviews = createAsyncThunk('users/getReviews', async (_, api) =>
     const dispatch = api.dispatch as AppDispatch;
     await fakeDelay(1000);
     try {
-        const _id = getURLSearchParam('profid');
+        let _id;
+        _id = getURLSearchParam('profid');
+        if (_id) {
+            _id = localStorage.getItem('prof_id');
+        }
 
         const { data } = await axios.get(`${CONFIG_API_URL}/api/reviews/professorReviews/${_id}`);
 
@@ -171,8 +175,8 @@ export const postComment = createAsyncThunk(
 
             dispatch(setSnackbar('Comment Successfully Posted 🎉 '));
             return data;
-        } catch (err) {
-            dispatch(setSnackbar('Error', { severity: 'error' }));
+        } catch (err: any) {
+            dispatch(setSnackbar(err.response?.data.message || 'message', { severity: 'error' }));
             throw err;
         }
     }
@@ -194,6 +198,7 @@ export const Review = createSlice({
         builder.addCase(postComment.fulfilled, (state, action: PayloadAction<IReview>) => {
             return {
                 ...state,
+
                 data: { ...state.data, reviews: state.data.reviews.concat(action.payload) },
                 loading: false,
             };

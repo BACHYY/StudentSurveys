@@ -70,7 +70,7 @@ const deleteProfessor = asyncHandler(async (req, res) => {
 });
 
 const deactivateProfessor = asyncHandler(async (req, res) => {
-    (req.params);
+    req.params;
     const { id } = req.params;
     const professor = await PROFESSOR.findById(id);
     if (professor) {
@@ -147,10 +147,7 @@ const searchProfessors = async (req, res, next) => {
         // const users = await USER.find({ search: regex });
         let profs = await PROFESSOR.find({ $text: { $search: search } });
 
-
         if (profs.length === 0) {
-            console.log('regex search');
-            console.log(regex);
             profs = await PROFESSOR.find({
                 $or: [{ name: regex }],
             });
@@ -161,13 +158,19 @@ const searchProfessors = async (req, res, next) => {
         next(error);
     }
 };
+
+const getProfessor = asyncHandler(async (req, res) => {
+    const { _id } = req.params;
+
+    const professor = await PROFESSOR.findById(_id);
+
+    res.status(200).json(professor);
+});
 // @desc    Create new rating
 // @route   POST /api/prof/:id/rate
 // @access  Private
 const createProfessorRating = asyncHandler(async (req, res) => {
     const { comment, profName, value } = req.body;
-    console.log(comment);
-    console.log(req.user);
 
     const professor = await PROFESSOR.findById(req.params._id);
 
@@ -194,7 +197,7 @@ const createProfessorRating = asyncHandler(async (req, res) => {
         professor.ratings.push(rating);
 
         await professor.save();
-        res.status(201).json({ message: 'Review added' });
+        res.status(201).json(rating);
     } else {
         res.status(404);
         throw new Error('Professor not found');
@@ -208,12 +211,9 @@ const addProfessorCourse = asyncHandler(async (req, res) => {
     }
     const course = { courseName, courseCount };
     const { id } = req.params;
-    console.log(id);
     let professor = await PROFESSOR.findById(id);
 
     if (professor) {
-        console.log(professor);
-
         const courseExist = professor.courses.find((c) => c.courseName.toLowerCase() === courseName.toLowerCase());
         if (courseExist) {
             throw new Error('Course already exists');
@@ -233,15 +233,12 @@ const addProfessorCourse = asyncHandler(async (req, res) => {
 const updateProfessorCourse = asyncHandler(async (req, res) => {
     const { courseName } = req.body;
     const { id, courseId } = req.params;
-    console.log(id, courseId);
     let professor = await PROFESSOR.findById(req.params.id);
 
     if (professor) {
-        console.log(professor);
         // the professor has courses array , we have to find the course that we are gonna update,
         //we use find method, and match the courseId from params to the professors course
         const course = professor.courses.find((c) => c._id.toString() === courseId.toString());
-        console.log({ course });
         course.courseName = courseName;
 
         await professor.save();
@@ -253,15 +250,12 @@ const updateProfessorCourse = asyncHandler(async (req, res) => {
 });
 const deleteProfessorCourse = asyncHandler(async (req, res) => {
     const { id, courseId } = req.params;
-    console.log(id, courseId);
     let professor = await PROFESSOR.findById(req.params.id);
 
     if (professor) {
-        console.log(professor);
         const course = professor.courses.find((c) => c._id.toString() === courseId.toString());
 
         professor.courses = professor.courses.filter((c) => c._id.toString() === course._id.toString);
-        console.log({ course });
 
         await professor.save();
         res.status(201).json({ message: 'Course deleted successfully' });
@@ -276,7 +270,9 @@ const searchProfCourses = asyncHandler(async (req, res) => {
     let professor = await PROFESSOR.findById(profId);
 
     if (professor) {
-        console.log(professor);
+        if (!search || !search.length) {
+            return res.status(200).json({ courses: [], message: 'success' });
+        }
         const courses = professor.courses.filter((c) => c.courseName.toLowerCase().includes(search.toLowerCase()));
         await professor.save();
         res.status(200).json({ courses, message: 'success' });
@@ -297,4 +293,5 @@ export {
     deleteProfessorCourse,
     searchProfCourses,
     addProfessorCourse,
+    getProfessor,
 };

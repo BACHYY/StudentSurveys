@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 // defining a structure of professors collection
 
+const courseSchema = new mongoose.Schema({
+    courseName: { type: String, required: true, index: true, unique: true },
+    courseCount: { type: Number, required: true },
+});
+
 const repliesSchema = mongoose.Schema({
     _id: { type: mongoose.Schema.Types.ObjectId },
     comment: { type: String, required: false },
@@ -8,6 +13,7 @@ const repliesSchema = mongoose.Schema({
     upVotes: { type: Number, required: false },
     downVotes: { type: Number, required: false },
 });
+
 const ratingSchema = mongoose.Schema(
     {
         _id: { type: mongoose.Schema.Types.ObjectId },
@@ -47,12 +53,7 @@ const professorSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        courses: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: 'Course',
-            },
-        ],
+        courses: [courseSchema],
         ratings: [ratingSchema],
         isActive: {
             type: Boolean,
