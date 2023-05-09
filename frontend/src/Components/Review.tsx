@@ -7,6 +7,7 @@ import ProfessorReviewShowRatings from './ProfessorReviewShowRatings';
 import ProfessorReviewShowReview from './ProfessorReviewShowReview';
 import ProfessorReviewWriteReview from './ProfessorReviewWriteReview';
 import { useAppSelector } from './useReactRedux';
+import ProfessorCourse from './ProfessorCourse';
 
 export interface IReviewLevel {
     '1-star': boolean;
@@ -48,6 +49,7 @@ export default function Review() {
             <HeaderNavbar />
 
             <ProfessorReviewHeader />
+            <ProfessorCourse />
 
             <Divider />
 

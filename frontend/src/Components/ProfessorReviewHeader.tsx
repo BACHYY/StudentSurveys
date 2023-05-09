@@ -17,7 +17,7 @@ export default function ProfessorReviewHeader() {
                 <Stack>
                     <Typography variant="h3">{data.name}</Typography>
                     <Typography variant="h6" color="GrayText">
-                        Reviews
+                        Reviews {rating.averageRating}
                     </Typography>
                     <ProfessorRating value={rating.averageRating} />
                 </Stack>

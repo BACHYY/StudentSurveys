@@ -51,7 +51,6 @@ export default function MainPageImageComponent() {
                         <TabStyle color="error" value="school" label={'School'} />
 
                         <TabStyle value="professor" label={'Professor'} />
-                        <TabStyle value="course" label={'Course'} />
                     </Tabs>
                     <Searchbar
                         setSearch={(name) => {
@@ -72,15 +71,6 @@ export default function MainPageImageComponent() {
                                         >
                                             {result.name}
                                         </TypographyStyle>
-                                    ) : type === 'school' ? (
-                                        <TypographyStyle
-                                            onClick={() => {
-                                                navigate(`/${type}/${result.school}`);
-                                                dispatch(setProfessor(result));
-                                            }}
-                                        >
-                                            {result.school}
-                                        </TypographyStyle>
                                     ) : (
                                         <TypographyStyle
                                             onClick={() => {
@@ -88,7 +78,7 @@ export default function MainPageImageComponent() {
                                                 dispatch(setProfessor(result));
                                             }}
                                         >
-                                            {result.course}
+                                            {result.school}
                                         </TypographyStyle>
                                     )}
                                 </div>

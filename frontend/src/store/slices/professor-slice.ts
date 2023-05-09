@@ -5,11 +5,17 @@ import { AppDispatch } from '../../Components/redux-types';
 import { CONFIG_API_URL } from '../../constants/CONFIG';
 import { setSnackbar } from './snackbar-slice';
 
+export interface ICourse {
+    _id?: string;
+    courseName: string;
+    courseCount: number;
+}
 interface IProf {
     _id?: string;
     name: string;
     school: string;
     department: string;
+    courses?: ICourse[];
 }
 
 type TState = {
@@ -23,6 +29,7 @@ const initialState: TState = {
         name: '',
         school: '',
         department: '',
+        courses: [],
     },
     loading: false,
 };
