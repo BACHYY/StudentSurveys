@@ -11,6 +11,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import bookmarkRoutes from './routes/bookmarkRoutes.js';
 import passwordRoutes from './routes/passwordRoutes.js';
 import { errorHandler, notFound } from './middlewares/errorMiddleware.js';
+import courseRoute from './routes/courseRoute.js';
 dotenv.config({ path: './config.env' });
 // Fix env configuration
 
@@ -47,6 +48,8 @@ app.use('/api/reviews', reviewRoutes);
 
 app.use('/api/bookmarks', bookmarkRoutes);
 app.use('/api/password', passwordRoutes);
+
+app.use('/api/course', courseRoute);
 
 // ======================>CheckPoint 3<=====================
 

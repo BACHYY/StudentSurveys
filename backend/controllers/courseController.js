@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler';
-import { escapeRegex } from '../utils/utils';
-import Course from '../models/courseModel';
+import { escapeRegex } from '../utils/utils.js';
+import Course from '../models/courseModel.js';
 // searching course query: search
 
 const searchCourse = asyncHandler(async (req, res) => {
@@ -22,9 +22,20 @@ const searchCourse = asyncHandler(async (req, res) => {
     }
 });
 
-// adding course for professor in professor controller
-
-// searching course of particular
 // list professors teaching the particular course
 
-export { searchCourse };
+const getAllProfessorTeachingCourse = asyncHandler(async (req, res) => {
+    const { course_id } = req.params;
+    try {
+        const professors = await Professor.find().populate({
+            path: 'courses',
+            match: { _id: course_id },
+        });
+        res.status(200).json({ professors });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
+
+export { searchCourse, getAllProfessorTeachingCourse };

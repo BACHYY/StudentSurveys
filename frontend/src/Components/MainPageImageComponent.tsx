@@ -26,7 +26,17 @@ export default function MainPageImageComponent() {
                 setResults(data);
             };
 
-            fetchResults();
+            const fetchCourses = async () => {
+                const response = await fetch(`http://localhost:8000/api/course/search?search=${search}`);
+                const data = await response.json();
+                setResults(data);
+            };
+
+            if (type === 'course') {
+                fetchCourses();
+            } else {
+                fetchResults();
+            }
         }, 100);
     }, [search]);
 
@@ -51,6 +61,7 @@ export default function MainPageImageComponent() {
                         <TabStyle color="error" value="school" label={'School'} />
 
                         <TabStyle value="professor" label={'Professor'} />
+                        <TabStyle value="course" label={'Courses'} />
                     </Tabs>
                     <Searchbar
                         setSearch={(name) => {
@@ -71,7 +82,7 @@ export default function MainPageImageComponent() {
                                         >
                                             {result.name}
                                         </TypographyStyle>
-                                    ) : (
+                                    ) : type === 'school' ? (
                                         <TypographyStyle
                                             onClick={() => {
                                                 navigate(`/${type}/${result.school}`);
@@ -79,6 +90,14 @@ export default function MainPageImageComponent() {
                                             }}
                                         >
                                             {result.school}
+                                        </TypographyStyle>
+                                    ) : (
+                                        <TypographyStyle
+                                            onClick={() => {
+                                                navigate(`/course/${result._id}`);
+                                            }}
+                                        >
+                                            {result.courseName}
                                         </TypographyStyle>
                                     )}
                                 </div>
