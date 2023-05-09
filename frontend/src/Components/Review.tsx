@@ -58,11 +58,12 @@ export default function Review() {
             fetch(`http://localhost:8000/api/prof/getSingle/${professor_id}`).then((response) => {
                 response.json().then((res) => {
                     dispatch(setProfessor(res));
-                    dispatch(getReviews());
+                    setSearchParams({ profid: res._id, userid: user_id });
                 });
             });
         }
-    }, [prof_id]);
+        dispatch(getReviews());
+    }, []);
     useEffect(() => {
         if (!prof_id) return;
         setSearchParams({ userid: user_id, profid: prof_id });
