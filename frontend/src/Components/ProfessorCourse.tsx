@@ -6,8 +6,10 @@ import Popup from './Popup';
 
 import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface TCourse {
+    _id?: string;
     courseName: string;
     courseCount: number;
 }
@@ -107,19 +109,28 @@ function AddCourse({ token, professorId, setCourseToDom }: IAddCourse) {
 }
 
 function ListCourses({ courses }: { courses: TCourse[] }) {
+    const navigate = useNavigate();
+
     return (
         <StackStyle flexDirection={'column'}>
             {courses.map((course) => {
                 return (
-                    <StackStyle
-                        flexDirection={'row'}
-                        alignContent={'center'}
-                        justifyContent={'center'}
-                        marginTop={'-5rem'}
+                    <div
+                        style={{ cursor: 'pointer', zIndex: 100 }}
+                        onClick={() => {
+                            navigate(`/course/${course._id}`);
+                        }}
                     >
-                        <Book />
-                        <Typography variant="h5">{course.courseName}</Typography>
-                    </StackStyle>
+                        <StackStyle
+                            flexDirection={'row'}
+                            alignContent={'center'}
+                            justifyContent={'center'}
+                            marginTop={'-5rem'}
+                        >
+                            <Book />
+                            <Typography variant="h5">{course.courseName}</Typography>
+                        </StackStyle>
+                    </div>
                 );
             })}
         </StackStyle>

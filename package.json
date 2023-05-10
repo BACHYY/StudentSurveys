@@ -18,5 +18,9 @@
     "bugs": {
         "url": "https://github.com/BACHYY/StudentSurveys/issues"
     },
-    "homepage": "https://github.com/BACHYY/StudentSurveys#readme"
+    "homepage": "https://github.com/BACHYY/StudentSurveys#readme",
+    "dependencies": {
+        "@material-ui/core": "^4.12.4",
+        "@material-ui/icons": "^4.11.3"
+    }
 }

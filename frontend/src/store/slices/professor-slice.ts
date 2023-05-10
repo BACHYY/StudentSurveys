@@ -10,7 +10,7 @@ export interface ICourse {
     courseName: string;
     courseCount: number;
 }
-interface IProf {
+export interface IProf {
     _id?: string;
     name: string;
     school: string;

@@ -1,6 +1,8 @@
 import asyncHandler from 'express-async-handler';
 import { escapeRegex } from '../utils/utils.js';
 import Course from '../models/courseModel.js';
+import PROFESSOR from '../models/professorModel.js';
+import mongoose from 'mongoose';
 // searching course query: search
 
 const searchCourse = asyncHandler(async (req, res) => {
@@ -26,12 +28,13 @@ const searchCourse = asyncHandler(async (req, res) => {
 
 const getAllProfessorTeachingCourse = asyncHandler(async (req, res) => {
     const { course_id } = req.params;
+
     try {
-        const professors = await Professor.find().populate({
-            path: 'courses',
-            match: { _id: course_id },
-        });
-        res.status(200).json({ professors });
+        const course = await Course.findById(course_id);
+        if (course) {
+            const professors = await PROFESSOR.find({ courses: course_id });
+            res.status(200).json({ course, professors });
+        }
     } catch (error) {
         console.log(error);
         next(error);
