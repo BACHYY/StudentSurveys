@@ -7,6 +7,7 @@ import Popup from './Popup';
 import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { CONFIG_API_URL } from '../constants/CONFIG';
 
 interface TCourse {
     _id?: string;
@@ -41,7 +42,7 @@ function AddCourse({ token, professorId, setCourseToDom }: IAddCourse) {
         }
         if (!adding) {
             setAdding(true);
-            fetch(`http://localhost:8000/api/prof/addCourse/${professorId}`, {
+            fetch(`${CONFIG_API_URL}/api/prof/addCourse/${professorId}`, {
                 method: 'POST',
                 body: JSON.stringify({
                     courseName: course,
@@ -154,7 +155,7 @@ function ProfessorCourse() {
         }
         try {
             const { data } = await axios.get(
-                `http://localhost:8000/api/prof/searchCourse/?profId=${_id}&search=${fieldValue}`
+                `${CONFIG_API_URL}/api/prof/searchCourse/?profId=${_id}&search=${fieldValue}`
             );
             setCourses(data.courses as TCourse[]);
         } catch (err) {

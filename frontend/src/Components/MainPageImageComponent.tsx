@@ -5,6 +5,7 @@ import MainPage from '../assets/MainPage.jpg';
 import { setProfessor } from '../store/slices/professor-slice';
 import Searchbar from './Searchbar';
 import { useAppDispatch } from './useReactRedux';
+import { CONFIG_API_URL } from '../constants/CONFIG';
 
 export default function MainPageImageComponent() {
     const [type, setType] = useState<'professor' | 'school' | 'course'>('professor');
@@ -21,13 +22,13 @@ export default function MainPageImageComponent() {
 
         timer.current = setTimeout(() => {
             const fetchResults = async () => {
-                const response = await fetch(`http://localhost:8000/api/prof/search?name=${search}&type=${type}`);
+                const response = await fetch(`${CONFIG_API_URL}/api/prof/search?name=${search}&type=${type}`);
                 const data = await response.json();
                 setResults(data);
             };
 
             const fetchCourses = async () => {
-                const response = await fetch(`http://localhost:8000/api/course/search?search=${search}`);
+                const response = await fetch(`${CONFIG_API_URL}/api/course/search?search=${search}`);
                 const data = await response.json();
                 setResults(data);
             };

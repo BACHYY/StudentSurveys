@@ -30,7 +30,6 @@ userRoutes.post("/login", login);
 userRoutes.post("/forgotPassword", forgotPass);
 
 
-//localhost:8000/api/users/4
 userRoutes.delete("/:id", deleteUser);
 userRoutes.put("/deactivate/:id", deactivateUser);
 userRoutes.put("/update/:id", updateUser);

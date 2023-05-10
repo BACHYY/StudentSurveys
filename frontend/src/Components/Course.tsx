@@ -6,6 +6,7 @@ import { ICourse, IProf } from '../store/slices/professor-slice';
 import { useDispatch } from 'react-redux';
 import { setSnackbar } from '../store/slices/snackbar-slice';
 import { Person } from '@mui/icons-material';
+import { CONFIG_API_URL } from '../constants/CONFIG';
 
 export interface ICourseProfessorData {
     course?: ICourse;
@@ -66,7 +67,7 @@ function Course() {
 
     useEffect(() => {
         if (course_id) {
-            fetch(`http://localhost:8000/api/course/professors/${course_id}`)
+            fetch(`${CONFIG_API_URL}/api/course/professors/${course_id}`)
                 .then(async (response) => {
                     const data = await response.json();
                     setData(data);

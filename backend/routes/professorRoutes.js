@@ -35,7 +35,6 @@ professorRoutes.get('/getsingle/:_id', getProfessor);
 
 professorRoutes.post('/login', loginProfessor);
 
-//localhost:8000/api/users/4
 professorRoutes.delete('/delete/:id', deleteProfessor);
 professorRoutes.put('/deactivate/:id', deactivateProfessor);
 professorRoutes.put('/update/:id', updateProfessor);

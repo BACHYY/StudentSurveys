@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { getUserBookmarks } from '../store/slices/post-bookmark-slice';
 import ProfessorRating from './ProfessorRating';
 import { useAppDispatch, useAppSelector } from './useReactRedux';
+import { CONFIG_API_URL } from '../constants/CONFIG';
 
 export default function SettingsBookmarkedReviews() {
     const { data } = useAppSelector((state) => state.login);
@@ -17,7 +18,7 @@ export default function SettingsBookmarkedReviews() {
 
     const _id = data._id;
     const onDelete = async (bookmarkId: string) => {
-        await fetch(`http://localhost:8000/api/bookmarks/reviews/${_id}/${bookmarkId}`, { method: 'DELETE' });
+        await fetch(`${CONFIG_API_URL}/api/bookmarks/reviews/${_id}/${bookmarkId}`, { method: 'DELETE' });
     };
 
     return (

@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from './useReactRedux';
 import ProfessorCourse from './ProfessorCourse';
 import { setProfessor } from '../store/slices/professor-slice';
 import { getReviews } from '../store/slices/post-review-slice';
+import { CONFIG_API_URL } from '../constants/CONFIG';
 
 export interface IReviewLevel {
     '1-star': boolean;
@@ -55,7 +56,7 @@ export default function Review() {
         } else {
             professor_id = localStorage.getItem('prof_id') as string;
 
-            fetch(`http://localhost:8000/api/prof/getSingle/${professor_id}`).then((response) => {
+            fetch(`${CONFIG_API_URL}/api/prof/getSingle/${professor_id}`).then((response) => {
                 response.json().then((res) => {
                     dispatch(setProfessor(res));
                     setSearchParams({ profid: res._id, userid: user_id });
