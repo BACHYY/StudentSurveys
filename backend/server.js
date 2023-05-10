@@ -12,6 +12,11 @@ import bookmarkRoutes from './routes/bookmarkRoutes.js';
 import passwordRoutes from './routes/passwordRoutes.js';
 import { errorHandler, notFound } from './middlewares/errorMiddleware.js';
 import courseRoute from './routes/courseRoute.js';
+import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 dotenv.config({ path: './config.env' });
 // Fix env configuration
 
@@ -21,6 +26,10 @@ const connectionString = process.env.mongoURI;
 connectDB(connectionString);
 //Express middleware to parse the body from the incoming request
 app.use(express.json());
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../frontend/build')));
+}
 app.use(
     cors({
         origin: '*',
@@ -51,6 +60,9 @@ app.use('/api/password', passwordRoutes);
 
 app.use('/api/course', courseRoute);
 
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend', 'build', 'index.html'));
+});
 // ======================>CheckPoint 3<=====================
 
 // app.use("/api/produst", productRoutes);
