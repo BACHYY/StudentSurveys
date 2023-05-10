@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import HeaderNavbar from './HeaderNavbar';
 import { Fade, IconButton, Stack, Typography, styled } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ICourse, IProf } from '../store/slices/professor-slice';
+import { ICourse, IProf, setProfessor } from '../store/slices/professor-slice';
 import { useDispatch } from 'react-redux';
 import { setSnackbar } from '../store/slices/snackbar-slice';
 import { Person } from '@mui/icons-material';
 import { CONFIG_API_URL } from '../constants/CONFIG';
+import { useAppSelector } from './useReactRedux';
 
 export interface ICourseProfessorData {
     course?: ICourse;
@@ -14,6 +15,7 @@ export interface ICourseProfessorData {
 }
 
 function ListProfessors({ professors }: { professors: IProf[] }) {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     return (
         <StackStyle
@@ -34,7 +36,8 @@ function ListProfessors({ professors }: { professors: IProf[] }) {
                             marginLeft={'1rem'}
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                                navigate(`/professor/${professor._id}`);
+                                dispatch(setProfessor(professor));
+                                navigate(`/professor/${professor.school}/?profid=${professor._id}`);
                             }}
                         >
                             <IconButton>
