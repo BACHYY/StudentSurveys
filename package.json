@@ -12,6 +12,9 @@
         "type": "git",
         "url": "git+https://github.com/BACHYY/StudentSurveys.git"
     },
+    "engines": {
+        "node": "18.12.1"
+    },
     "keywords": [],
     "author": "",
     "license": "ISC",
