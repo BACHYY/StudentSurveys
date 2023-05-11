@@ -46,7 +46,7 @@ export default function SettingsBookmarkedReviews() {
                         </StackStyle1>
                         <Divider />
                         <Stack flexDirection="row" justifyContent="space-between">
-                            <ProfessorRating value={3} />
+                            <ProfessorRating value={bookmark.ratingValue} />
                         </Stack>
 
                         <Stack>

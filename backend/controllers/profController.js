@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import PROFESSOR from '../models/professorModel.js';
 import { escapeRegex } from '../utils/utils.js';
 import Course from '../models/courseModel.js';
+import Rating from '../models/reviewModel.js';
 
 const registerProfessor = asyncHandler(async (req, res) => {
     const { name, school, department } = req.body;
@@ -163,7 +164,7 @@ const searchProfessors = async (req, res, next) => {
 const getProfessor = asyncHandler(async (req, res) => {
     const { _id } = req.params;
 
-    const professor = await PROFESSOR.findById(_id);
+    const professor = await PROFESSOR.findById(_id).populate('ratings');
 
     res.status(200).json(professor);
 });
@@ -173,7 +174,7 @@ const getProfessor = asyncHandler(async (req, res) => {
 const createProfessorRating = asyncHandler(async (req, res) => {
     const { comment, profName, value } = req.body;
 
-    const professor = await PROFESSOR.findById(req.params._id);
+    const professor = await PROFESSOR.findById(req.params._id).populate('ratings');
 
     if (professor) {
         const alreadyReviewed = professor.ratings.find((r) => r.user.toString() === req.user._id.toString());
@@ -195,7 +196,9 @@ const createProfessorRating = asyncHandler(async (req, res) => {
             replies: [],
         };
 
-        professor.ratings.push(rating);
+        const ratings = await Rating.create(rating);
+
+        professor.ratings.push(ratings);
 
         await professor.save();
         res.status(201).json(rating);

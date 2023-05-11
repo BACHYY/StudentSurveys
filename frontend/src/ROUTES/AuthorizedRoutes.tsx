@@ -13,17 +13,18 @@ import SecurityQuestion from '../Pages/SecurityQuestion';
 import SettingsReviews from '../Pages/SettingsReviews';
 import UserSettings from '../Pages/UserSettings';
 import Course from '../Components/Course';
+import DeletedReviews from '../Components/DeletedReviews';
 
 export default function AuthorizedRoutes() {
-    const userid = useAppSelector((state) => state.login.data._id);
+    const { isAdmin, _id } = useAppSelector((state) => state.login.data);
     const { pathname } = useLocation();
 
     const [, setSearchParams] = useSearchParams();
 
     useEffect(() => {
-        if (!userid) return;
-        setSearchParams({ userid: userid });
-    }, [userid, pathname]);
+        if (!_id) return;
+        setSearchParams({ userid: _id });
+    }, [_id, pathname]);
 
     return (
         <>
@@ -44,6 +45,8 @@ export default function AuthorizedRoutes() {
                 <Route path="/admin/addProfessors" element={<AddProfessors />} />
 
                 <Route path={'*'} element={<Navigate to={'/'} />} />
+                {isAdmin && <Route path="/dashboard/deletedReviews" element={<DeletedReviews />} />}
+                {}
             </Routes>
             <Snack />
         </>

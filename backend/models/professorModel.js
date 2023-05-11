@@ -6,36 +6,32 @@ const courseSchema = new mongoose.Schema({
     courseCount: { type: Number, required: true },
 });
 
-const repliesSchema = mongoose.Schema({
-    _id: { type: mongoose.Schema.Types.ObjectId },
-    comment: { type: String, required: false },
-    name: { type: String, required: false },
-    upVotes: { type: Number, required: false },
-    downVotes: { type: Number, required: false },
-});
+// const ratingSchema = mongoose.Schema(
+//     {
+//         _id: { type: mongoose.Schema.Types.ObjectId },
+//         comment: { type: String, required: false },
+//         ratingValue: { type: Number, required: true },
+//         upVotes: { type: Number, required: false },
+//         downVotes: { type: Number, required: false },
+//         name: { type: String, required: false },
+//         profName: { type: String, required: false },
+//         isDeleted: {
+//             type: Boolean,
+//             default: false,
+//         },
 
-const ratingSchema = mongoose.Schema(
-    {
-        _id: { type: mongoose.Schema.Types.ObjectId },
-        comment: { type: String, required: false },
-        ratingValue: { type: Number, required: true },
-        upVotes: { type: Number, required: false },
-        downVotes: { type: Number, required: false },
-        name: { type: String, required: false },
-        profName: { type: String, required: false },
+//         user: {
+//             type: mongoose.Schema.Types.ObjectId,
+//             required: true,
+//             ref: 'User',
+//         },
 
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            ref: 'User',
-        },
-
-        replies: [repliesSchema],
-    },
-    {
-        timestamps: true,
-    }
-);
+//         replies: [repliesSchema],
+//     },
+//     {
+//         timestamps: true,
+//     }
+// );
 
 const professorSchema = mongoose.Schema(
     {
@@ -60,7 +56,12 @@ const professorSchema = mongoose.Schema(
                 ref: 'Course',
             },
         ],
-        ratings: [ratingSchema],
+        ratings: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'Review',
+            },
+        ],
         isActive: {
             type: Boolean,
             default: true,

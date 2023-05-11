@@ -144,7 +144,7 @@ export const postVote = createAsyncThunk('users/postVote', async ({ reviewId, vo
         const { data } = await axios.put(`${CONFIG_API_URL}/api/reviews/vote/${_id}/${reviewId}?voteType=${voteType}`);
 
         dispatch(setSnackbar('Voted Successfully 🎉 '));
-        return data;
+        return data.review;
     } catch (err) {
         dispatch(setSnackbar('Error', { severity: 'error' }));
         throw err;
@@ -234,6 +234,7 @@ export const Review = createSlice({
                 loading: false,
             };
         });
+
         // ==================>delete Reviews<===================
 
         builder.addCase(deleteReview.pending, (state) => {
@@ -281,9 +282,16 @@ export const Review = createSlice({
         });
 
         builder.addCase(postVote.fulfilled, (state, action: PayloadAction<IReview>) => {
+            const newReviews = state.data.reviews.map((review) => {
+                if (review._id === action.payload._id) {
+                    return action.payload;
+                } else {
+                    return review;
+                }
+            });
             return {
                 ...state,
-                data: { ...state.data, reviews: state.data.reviews.concat(action.payload) },
+                data: { ...state.data, reviews: newReviews },
                 loading: false,
             };
         });

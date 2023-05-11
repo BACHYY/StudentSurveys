@@ -1,14 +1,38 @@
 import Mongoose from 'mongoose';
 import professorModel from '../models/professorModel.js';
 import mongoose from 'mongoose';
+import Rating from '../models/reviewModel.js';
+import PROFESSOR from '../models/professorModel.js';
 
+export async function getDeletedReviews(req, res) {
+    try {
+        const deletedReviews = await Rating.find({
+            isDeleted: true,
+        });
+        res.status(200).json({ reviews: deletedReviews });
+    } catch (err) {
+        next(err);
+    }
+}
+
+export async function restoreDeletedReview(req, res) {
+    try {
+        const reviewId = req.params.reviewId;
+        await Rating.findByIdAndUpdate(reviewId, { isDeleted: false });
+        return res.status(200).json({ message: 'restored' });
+    } catch (err) {
+        next(err);
+    }
+}
 export async function getProfessorReviews(req, res) {
     // get all reviews for a professor from mongodb
     try {
         // we are destructuring the id from request parameter
         const { _id } = req.params;
         //  we find professor by id
-        const professor = await professorModel.findById(_id);
+        const professor = await professorModel.findById(_id).populate('ratings');
+
+        const unDeletedRatings = professor.ratings.filter((rating) => !rating.isDeleted);
         //  if professor is not found return error
         if (!professor) {
             return res.status(404).json({ error: 'Professor not found' });
@@ -24,11 +48,11 @@ export async function getProfessorReviews(req, res) {
 
         const ratings_aggregate = {
             totalRatings: 0,
-            total: professor.ratings.length,
+            total: unDeletedRatings.length,
             avg_rating: 5,
         };
 
-        professor.ratings.forEach((rating) => {
+        unDeletedRatings.forEach((rating) => {
             let x = rating.ratingValue;
             ratings_aggregate.totalRatings += x;
 
@@ -78,7 +102,7 @@ export async function getProfessorReviews(req, res) {
             ],
         };
         // otherwise return we store professor ratings in reviews and return that.
-        return res.status(200).json({ reviews: professor.ratings, rating: finalRatings });
+        return res.status(200).json({ reviews: unDeletedRatings, rating: finalRatings });
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
@@ -97,7 +121,8 @@ export async function getUserReviews(req, res) {
         }
         // didn't understand this part!
         const reviews = professors.reduce((accumulator, professor) => {
-            const userReviews = professor.ratings.filter((rating) => rating.user.toString() === _id);
+            const userReviews =
+                professor.ratings.filter((rating) => rating.user.toString() === _id) && rating.isDeleted === false;
             return accumulator.concat(userReviews);
         }, []);
 
@@ -121,13 +146,21 @@ export async function voteAProfessorReview(req, res) {
             return res.status(400).json({ error: 'Invalid vote type' });
         }
 
-        const updatedReview = await professorModel.updateOne(
-            { _id: professorId, 'ratings._id': reviewId },
-            //  inc means increment
-            { $inc: { ['ratings.$.' + fieldName]: 1 } }
+        const updatedReview = await Rating.findOneAndUpdate(
+            { _id: reviewId },
+            { $inc: { [fieldName]: 1 } },
+            { new: true }
         );
-        return res.status(200).json({ reviews: updatedReview });
+
+        // const updatedReview = await professorModel.updateOne(
+        //     { _id: professorId, 'ratings._id': reviewId },
+        //     //  inc means increment
+        //     { $inc: { ['ratings.$.' + fieldName]: 1 } }
+        // );
+        console.log(updatedReview);
+        return res.status(200).json({ review: updatedReview });
     } catch (err) {
+        console.log(err);
         return res.status(400).json({ error: err.message });
     }
 }
@@ -148,10 +181,8 @@ export async function replyToReview(req, res) {
             downVotes: 0,
         };
         // add reply to review
-        const updatedProfessor = await professorModel.updateOne(
-            { _id: professorId, 'ratings._id': reviewId },
-            { $push: { 'ratings.$.replies': reply } }
-        );
+        await Rating.updateOne({ _id: reviewId }, { $push: { replies: reply } });
+        const updatedProfessor = await PROFESSOR.findById(professorId).populate('ratings');
 
         return res.status(200).json({ reviews: updatedProfessor?.ratings });
     } catch (err) {
@@ -164,13 +195,15 @@ export async function deleteUserReviews(req, res) {
         // destructure professor Id and reviewId
         const { professorId, reviewId } = req.params;
 
-        const filteredReviews = await professorModel.findOneAndUpdate(
-            { _id: professorId },
-            { $pull: { ratings: { _id: reviewId } } }
-        );
+        await Rating.findByIdAndUpdate(reviewId, { isDeleted: true });
+
+        const filteredReviews = await professorModel
+            .findById(professorId)
+            .populate({ path: 'ratings', match: { isDeleted: { $ne: true } } });
 
         return res.status(200).json({ reviews: filteredReviews });
     } catch (err) {
+        console.log(err);
         return res.status(400).json({ error: err.message });
     }
 }

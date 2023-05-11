@@ -44,6 +44,10 @@ export default function NavbarMenu() {
         navigate('/userSettings/reviews');
     };
 
+    const navigateToDeletedReviews = () => {
+        navigate('/dashboard/deletedReviews');
+    };
+
     const navigateToInitialState = () => {
         navigate('/');
         setTimeout(() => {
@@ -132,9 +136,9 @@ export default function NavbarMenu() {
                         </MenuItem>
                     </>
                 ) : (
-                    <MenuItem onClick={navigateToReviews}>
-                        {/* <RestoreFromTrashOutlined fontSize="small" sx={{ paddingRight: '10px', color: 'gray' }} />{' '}
-                        Deleted Reviews */}
+                    <MenuItem onClick={navigateToDeletedReviews}>
+                        <RestoreFromTrashOutlined fontSize="small" sx={{ paddingRight: '10px', color: 'gray' }} />{' '}
+                        Deleted Reviews
                     </MenuItem>
                 )}
 
