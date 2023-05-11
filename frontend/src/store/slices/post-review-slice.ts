@@ -6,6 +6,7 @@ import { CONFIG_API_URL } from '../../constants/CONFIG';
 import getURLSearchParam from '../../utils/getURLSearchParam';
 import { setSnackbar } from './snackbar-slice';
 import { TLevelName } from '../../Components/Review';
+import { useAppSelector } from '../../Components/useReactRedux';
 
 interface IVote {
     voteType: string;
@@ -137,16 +138,24 @@ export const getUserReviews = createAsyncThunk('users/getUserReviews', async (_,
 export const postVote = createAsyncThunk('users/postVote', async ({ reviewId, voteType }: IVote, api) => {
     const dispatch = api.dispatch as AppDispatch;
     await fakeDelay(1000);
+    const token = (api.getState() as RootState).login.data.token;
 
     try {
         const _id = getURLSearchParam('profid');
 
-        const { data } = await axios.put(`${CONFIG_API_URL}/api/reviews/vote/${_id}/${reviewId}?voteType=${voteType}`);
+        const { data } = await axios.put(
+            `${CONFIG_API_URL}/api/reviews/vote/${_id}/${reviewId}?voteType=${voteType}`,
+
+            null,
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
 
         dispatch(setSnackbar('Voted Successfully 🎉 '));
         return data.review;
-    } catch (err) {
-        dispatch(setSnackbar('Error', { severity: 'error' }));
+    } catch (err: any) {
+        dispatch(setSnackbar(err?.response?.data.message || 'Error', { severity: 'error' }));
         throw err;
     }
 });

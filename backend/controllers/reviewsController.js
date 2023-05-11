@@ -134,13 +134,38 @@ export async function getUserReviews(req, res) {
 
 export async function voteAProfessorReview(req, res) {
     try {
-        const { professorId, reviewId } = req.params;
+        const { reviewId } = req.params;
+
+        const rating = await Rating.findById(reviewId);
+
+        console.log(req.user._id);
+
+        if (rating.user === req.user._id) {
+            return res.status(400).json({ message: 'Cannot vote your own review' });
+        }
+
+        let userInUpVoteList = rating.upVoteList.includes(req.user._id);
+
+        let userInDownVoteList = rating.downVoteList.includes(req.user._id);
+
+        console.log(userInDownVoteList, userInUpVoteList);
         const { voteType } = req.query;
+
+        let listFieldName = '';
+
+        if (voteType === 'up' && userInUpVoteList) {
+            return res.status(400).json({ message: 'already voted up' });
+        } else if (voteType === 'down' && userInDownVoteList) {
+            return res.status(400).json({ message: 'already voted down' });
+        }
+
         //  we are making field name to make our querry more dynamic
         let fieldName = '';
         if (voteType === 'up') {
+            listFieldName = 'upVoteList';
             fieldName = 'upVotes';
         } else if (voteType === 'down') {
+            listFieldName = 'downVoteList';
             fieldName = 'downVotes';
         } else {
             return res.status(400).json({ error: 'Invalid vote type' });
@@ -148,7 +173,8 @@ export async function voteAProfessorReview(req, res) {
 
         const updatedReview = await Rating.findOneAndUpdate(
             { _id: reviewId },
-            { $inc: { [fieldName]: 1 } },
+            { $inc: { [fieldName]: 1 }, $push: { [listFieldName]: req.user._id } },
+
             { new: true }
         );
 
@@ -182,10 +208,14 @@ export async function replyToReview(req, res) {
         };
         // add reply to review
         await Rating.updateOne({ _id: reviewId }, { $push: { replies: reply } });
-        const updatedProfessor = await PROFESSOR.findById(professorId).populate('ratings');
+        const updatedProfessor = await PROFESSOR.findById(professorId).populate({
+            path: 'ratings',
+        });
 
+        console.log(updatedProfessor);
         return res.status(200).json({ reviews: updatedProfessor?.ratings });
     } catch (err) {
+        console.log(err);
         return res.status(400).json({ error: err.message });
     }
 }

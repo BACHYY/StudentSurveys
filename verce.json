@@ -1,0 +1,8 @@
+{
+    "version": 2,
+    "builds": [
+        { "src": "backend", "use": "@vercel/node" },
+        { "src": "frontend", "use": "@vercel/static-build" }
+    ],
+    "routes": [{ "src": "/.*", "dest": "backend/server.js" }]
+}

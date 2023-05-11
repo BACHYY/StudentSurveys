@@ -1,11 +1,11 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import fakeDelay from '../../Components/fakeDelay';
 import { AppDispatch } from '../../Components/redux-types';
 import { CONFIG_API_URL } from '../../constants/CONFIG';
 import getURLSearchParam from '../../utils/getURLSearchParam';
 import { setSnackbar } from './snackbar-slice';
-import { setProfessor } from './professor-slice';
+import { getReviews } from './post-review-slice';
 
 interface IComment {
     comment: string;
@@ -43,7 +43,7 @@ export const postReply = createAsyncThunk('users/postReply', async ({ reviewId, 
         const { data } = await axios.put(`${CONFIG_API_URL}/api/reviews/reply/${_id}/${reviewId}`, body);
 
         dispatch(setSnackbar('Reply Successfully Posted 🎉 '));
-        return data;
+        return { data, dispatch };
     } catch (err) {
         dispatch(setSnackbar('Error', { severity: 'error' }));
         throw err;
@@ -63,13 +63,16 @@ export const ReplySlice = createSlice({
             };
         });
 
-        builder.addCase(postReply.fulfilled, (state, action: PayloadAction<IReply>) => {
-            return {
-                ...state,
-                data: state.data.concat(action.payload),
-                loading: false,
-            };
-        });
+        builder.addCase(
+            postReply.fulfilled,
+            (state, action: PayloadAction<{ data: IReply; dispatch: Dispatch<any> }>) => {
+                return {
+                    ...state,
+                    data: state.data.concat(action.payload.data),
+                    loading: false,
+                };
+            }
+        );
 
         builder.addCase(postReply.rejected, (state) => {
             return {

@@ -15,6 +15,18 @@ const ratingSchema = mongoose.Schema(
         ratingValue: { type: Number, required: true },
         upVotes: { type: Number, required: false },
         downVotes: { type: Number, required: false },
+        upVoteList: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
+        downVoteList: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
         name: { type: String, required: false },
         profName: { type: String, required: false },
         isDeleted: {
@@ -25,7 +37,7 @@ const ratingSchema = mongoose.Schema(
         user: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: 'User',
+            ref: 'Users',
         },
 
         replies: [repliesSchema],

@@ -174,37 +174,42 @@ const getProfessor = asyncHandler(async (req, res) => {
 const createProfessorRating = asyncHandler(async (req, res) => {
     const { comment, profName, value } = req.body;
 
-    const professor = await PROFESSOR.findById(req.params._id).populate('ratings');
+    try {
+        const professor = await PROFESSOR.findById(req.params._id).populate('ratings');
 
-    if (professor) {
-        const alreadyReviewed = professor.ratings.find((r) => r.user.toString() === req.user._id.toString());
+        if (professor) {
+            const alreadyReviewed = professor.ratings.find((r) => r.user.toString() === req.user._id.toString());
 
-        if (alreadyReviewed) {
-            res.status(400);
-            throw new Error('Professor already reviewed');
+            if (alreadyReviewed) {
+                res.status(400);
+                throw new Error('Professor already reviewed');
+            }
+
+            const rating = {
+                _id: mongoose.Types.ObjectId(),
+                name: req.user.name,
+                ratingValue: value,
+                profName,
+                upVotes: 0,
+                downVotes: 0,
+                comment,
+                user: req.user._id,
+                replies: [],
+            };
+
+            const ratings = await Rating.create(rating);
+
+            professor.ratings.push(ratings);
+
+            await professor.save();
+            res.status(201).json(rating);
+        } else {
+            res.status(404);
+            throw new Error('Professor not found');
         }
-
-        const rating = {
-            _id: mongoose.Types.ObjectId(),
-            name: req.user.name,
-            ratingValue: value,
-            profName,
-            upVotes: 0,
-            downVotes: 0,
-            comment,
-            user: req.user._id,
-            replies: [],
-        };
-
-        const ratings = await Rating.create(rating);
-
-        professor.ratings.push(ratings);
-
-        await professor.save();
-        res.status(201).json(rating);
-    } else {
-        res.status(404);
-        throw new Error('Professor not found');
+    } catch (err) {
+        console.log(err);
+        next(err);
     }
 });
 
